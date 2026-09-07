@@ -1,4 +1,4 @@
-# MiniClaw 电商运营数据分析多 Agent 工作台
+# DataFlow 电商运营数据分析多 Agent 工作台
 
 面向内容运营、直播运营、渠道运营和销售转化场景的经营分析工作台。项目基于 **MiniClaw / Pi Agent Runtime、Python、FastAPI、Pandas、Pydantic、JSON Schema 与 stdio MCP**，将分散的业务数据组织为可追溯的“数据接入—指标诊断—维度钻取—策略生成—行动复验”分析闭环。
 
