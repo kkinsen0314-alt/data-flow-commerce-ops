@@ -1,0 +1,126 @@
+:root {
+  --background: #f5f7f8;
+  --foreground: #202c32;
+  --card: #ffffff;
+  --card-foreground: #202c32;
+  --popover: #ffffff;
+  --popover-foreground: #202c32;
+  --primary: #0b7c70;
+  --primary-foreground: #ffffff;
+  --secondary: #edf1f3;
+  --secondary-foreground: #202c32;
+  --muted: #edf1f3;
+  --muted-foreground: #52626d;
+  --accent: #e8f4f1;
+  --accent-foreground: #0b7c70;
+  --border: #dce3e7;
+  --input: #dce3e7;
+  --ring: #0b7c70;
+  --brand-50: #e8f4f1;
+  --brand-100: #d7eeea;
+  --brand-200: #b4dcd5;
+  --brand-300: #80c3b7;
+  --brand-400: #4aa998;
+  --brand-500: #0b7c70;
+  --brand-600: #09695f;
+  --brand-700: #08594f;
+  --sidebar-background: var(--card);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-accent: var(--accent);
+  --sidebar-border: var(--border);
+  --radius: 0.625rem;
+  --df-green: var(--primary);
+  --df-green-soft: var(--accent);
+  --df-brand-on: var(--primary-foreground);
+  --df-canvas: var(--background);
+  --df-panel: var(--card);
+  --df-ink: var(--foreground);
+  --df-ink-soft: var(--muted-foreground);
+  --df-line: var(--border);
+  --df-subtle: var(--muted);
+  --df-line-soft: color-mix(in srgb, var(--border) 65%, var(--card));
+  --df-brand-hover: color-mix(in srgb, var(--primary) 85%, #000);
+  --df-focus: color-mix(in srgb, var(--primary) 25%, transparent);
+  --df-success: #146c55;
+  --df-success-bg: #e8f4ee;
+  --df-warning: #805b13;
+  --df-warning-bg: #fff6e3;
+  --df-error: #b42318;
+  --df-error-bg: #fcece9;
+  --df-info: #285d91;
+  --df-info-bg: #eaf2fa;
+  --df-control-radius: 6px;
+  --df-panel-radius: 10px;
+  --df-dialog-radius: 12px;
+  --df-page-title: 28px;
+  --df-section-title: 18px;
+  --df-body-size: 14px;
+  --df-caption-size: 12px;
+  --df-space-1: 4px;
+  --df-space-2: 8px;
+  --df-space-3: 12px;
+  --df-space-4: 16px;
+  --df-space-6: 24px;
+  --df-space-8: 32px;
+}
+
+html.dark {
+  --background: #141c21;
+  --foreground: #e3eaed;
+  --card: #1c272e;
+  --card-foreground: #e3eaed;
+  --popover: #1c272e;
+  --popover-foreground: #e3eaed;
+  --primary: #63c7b6;
+  --primary-foreground: #102a24;
+  --secondary: #26343d;
+  --secondary-foreground: #e3eaed;
+  --muted: #26343d;
+  --muted-foreground: #a7b7c0;
+  --accent: #233f3c;
+  --accent-foreground: #85d9cb;
+  --border: #35454f;
+  --input: #35454f;
+  --ring: #63c7b6;
+  --brand-50: #233f3c;
+  --brand-100: #28504a;
+  --brand-200: #31685e;
+  --brand-500: #63c7b6;
+  --brand-600: #85d9cb;
+  --brand-700: #b4e8de;
+  --df-success: #96d7bc;
+  --df-success-bg: #233d33;
+  --df-warning: #e6c37c;
+  --df-warning-bg: #413622;
+  --df-error: #efaca3;
+  --df-error-bg: #482f2c;
+  --df-info: #a0c5ed;
+  --df-info-bg: #263c51;
+  color-scheme: dark;
+}
+
+html:not(.dark) { color-scheme: light; }
+
+.df-login-page, .df-operations-shell, .df-navigation, .df-mobile-header, .df-mobile-navigation,
+.df-confirm-dialog, .df-connector-dialog {
+  font-family: var(--font-sans);
+  font-size: var(--df-body-size);
+  line-height: 1.6;
+  color: var(--df-ink);
+}
+
+:where(.df-login-page, .df-operations-shell, .df-navigation, .df-mobile-header, .df-mobile-navigation,
+.df-confirm-dialog, .df-connector-dialog) :focus-visible {
+  outline: 2px solid var(--df-green);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

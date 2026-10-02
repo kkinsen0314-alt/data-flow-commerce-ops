@@ -141,7 +141,21 @@ def validate(project_root: Path) -> dict[str, Any]:
         "runtime/setup-helper/serve.mjs",
         "runtime/setup-helper/smoke-content.html",
         "runtime/setup-helper/smoke.html",
+        "scripts/start-native-runtime.ps1",
         "scripts/verify-miniclaw-subagent-bridge.mjs",
+        "scripts/verify-provider-request-chain.mjs",
+        "artifacts/provider-request-chain-validation-v1.json",
+        "artifacts/runtime/native-full-v4-root-cause-diagnosis-v1.json",
+        "artifacts/runtime/native-profile-sync-assessment.json",
+        "artifacts/runtime/native-full-v2-redacted-trace.json",
+        "artifacts/runtime/native-full-v2-assessment.json",
+        "artifacts/runtime/native-full-v3-redacted-trace.json",
+        "artifacts/runtime/native-full-v3-assessment.json",
+        "artifacts/miniclaw-subagent-bridge-validation-v11.json",
+        "artifacts/miniclaw-subagent-bridge-validation-v12.json",
+        "artifacts/pi-extension-runtime-v5.json",
+        "artifacts/pi-extension-runtime-v6.json",
+        "artifacts/pi-default-resource-loader-v4.json",
     ]
     for relative in expected_files:
         check(
@@ -258,6 +272,47 @@ def validate(project_root: Path) -> dict[str, Any]:
             )
         ),
         "a parent dispatch failure blocks the branch and the final ledger merges parent and child attempts",
+    )
+    check(
+        "profile:provider-proposal-admission",
+        all(
+            token in agents_prompt + tools_prompt
+            for token in (
+                "按原顺序串行处理",
+                "coalesced",
+                "不产生第二次父级 Agent 工具尝试",
+                "executionMode=sequential",
+                "Provider 提议",
+            )
+        ),
+        "the authored Profile separates provider proposals from admitted attempts and documents deterministic coalescing",
+    )
+    check(
+        "profile:domain-data-ref-allocation",
+        all(
+            token in agents_prompt
+            for token in (
+                "内容角色至少接收全部 short_video",
+                "直播角色至少接收全部 live_session",
+                "渠道归因角色必须在唯一一次 inspect 中同时接收全部 channel_lead、sales_followup 和 order",
+            )
+        ),
+        "Supervisor must pass every domain-required dataset to the specialist's single inspect attempt",
+    )
+    check(
+        "profile:strategy-reference-envelope",
+        all(
+            token in agents_prompt
+            for token in (
+                "strategy_input JSON",
+                "完整 AnalysisPacket",
+                "analysis_run_id、dataset_ids、evidence、findings",
+                "finding→evidence 引用",
+                "禁止只传指标摘要或自然语言结论",
+                "缺失完整 ID 目录时不得生成行动",
+            )
+        ),
+        "Supervisor must pass complete machine-readable analysis packets into the strategy task",
     )
 
     workspace = load_json(project_root / "config/workspace-create.template.json")
@@ -380,7 +435,8 @@ def validate(project_root: Path) -> dict[str, Any]:
             all(
                 token in body
                 for token in (
-                    "Schema 参数校验失败也计为一次 inspect 尝试",
+                    "Schema 参数校验失败",
+                    "也计为一次 inspect 尝试",
                     "停止当前分支并返回 `blocked`",
                     "不得主动发起第二次 inspect",
                 )
@@ -407,6 +463,35 @@ def validate(project_root: Path) -> dict[str, Any]:
             and "禁止自动重试" in body,
             "degraded states and no-blind-retry behavior are explicit",
         )
+        check(
+            f"agent:{role_id}:explicit-drilldown-gate",
+            all(
+                token in body
+                for token in (
+                    "默认禁止钻取",
+                    "`drilldown_metric`",
+                    "`drilldown_dimension`",
+                    "才允许调用一次",
+                    "不得自行决定钻取",
+                    "不得自行决定钻取或发起第二次钻取",
+                )
+            ),
+            "drilldown requires an explicit Supervisor metric-and-dimension gate and is limited to one attempt",
+        )
+        check(
+            f"agent:{role_id}:no-unlisted-builtins",
+            all(
+                token in body
+                for token in (
+                    "`Read`",
+                    "`execute_command`",
+                    "`bash`",
+                    "`powershell`",
+                    "未列入本角色 `tools` 白名单",
+                )
+            ),
+            "role text explicitly forbids hallucinated built-ins and every tool outside its allowlist",
+        )
 
     review_meta, review_body = parse_frontmatter(
         project_root / ".pi/agents/commerce-review-strategist.md"
@@ -431,14 +516,39 @@ def validate(project_root: Path) -> dict[str, Any]:
         all(
             token in review_body
             for token in (
-                "finding_refs",
-                "evidence_refs",
+                "`action_id`",
+                "`priority`",
+                "`finding_ids`",
+                "`evidence_ids`",
+                "`action`",
                 "owner_role",
+                "due_window",
+                "rationale",
                 "verification_metric",
+                "verification_method",
+                "dataset_ids",
                 "guardrails",
+                "confidence",
+                '字符串 `"1.0"`',
+                '字符串 `"decision_packet"`',
+                '字符串 `"commerce_review_strategist"`',
+                "^decision_[A-Za-z0-9_-]+$",
+                "^action_[A-Za-z0-9_-]+$",
+                "`due_window` 必须是非空字符串",
+                "`increase`、`decrease`、`maintain` 或 `observe`",
+                "`blocked_reasons` 必须是字符串数组",
+                "不得在 DecisionPacket 根对象增加",
+                "`allowed_finding_ids`",
+                "`allowed_evidence_ids`",
+                "`allowed_dataset_ids`",
+                "只能逐字复制这些已存在 ID",
+                "真实 finding→evidence 链",
+                "所有 action 引用均是输入真实 ID 的子集",
+                "`strategy_input` JSON",
+                "strategy_reference_catalog_missing",
             )
         ),
-        "review actions retain responsibility, evidence, verification, and guardrails",
+        "review role pins exact DecisionPacket literals, types, allowed fields, and nested VerificationMetric contract",
     )
 
     marketplace = load_json(
@@ -574,9 +684,65 @@ def validate(project_root: Path) -> dict[str, Any]:
         "inspect tool description exposes the strict root argument and attempt-count contract",
     )
     check(
+        "extension:deterministic-tool-cardinality",
+        all(
+            token in extension_source
+            for token in (
+                "workflowToolStates",
+                'executionMode: "sequential"',
+                "completedPhaseResults",
+                "duplicate_phase_provider_proposal_coalesced",
+                "provider_proposal_disposition",
+                "analysis_dataset_not_registered_by_inspect",
+                "required_inspect_dataset_types_missing",
+            )
+        ),
+        "the role-local extension serializes provider proposals, coalesces completed phases, and still blocks invalid dataset registration",
+    )
+    check(
+        "extension:business-terminal-audit",
+        all(
+            token in extension_source
+            for token in (
+                "resultTerminalStatus",
+                'terminalStatus === "blocked"',
+                "mcp_business_terminal_blocked",
+                "businessError",
+            )
+        ),
+        "structured business blocked or uncertain results are reflected in child audit status and Pi tool errors",
+    )
+    check(
+        "extension:strategy-reference-catalog-audit",
+        all(
+            token in extension_source
+            for token in (
+                "resultReferenceMetadata",
+                "dataset_ids",
+                "evidence_ids",
+                "finding_ids",
+                "finding_evidence_links",
+            )
+        ),
+        "completed specialist analysis audits expose a redacted ID catalog for strategy validation",
+    )
+    check(
         "extension:shutdown",
         'pi.on("session_shutdown"' in extension_source,
         "stdio transport cleanup is registered",
+    )
+    check(
+        "extension:single-tool-provider-policy",
+        all(
+            token in extension_source
+            for token in (
+                'pi.on("before_provider_request"',
+                "enforceSingleToolTurn",
+                "disable_parallel_tool_use: true",
+                'type: "auto"',
+            )
+        ),
+        "professional specialist requests use Anthropic at-most-one tool call semantics",
     )
 
     bridge_source = (
@@ -596,25 +762,96 @@ def validate(project_root: Path) -> dict[str, Any]:
             token in bridge_source
             for token in (
                 "PROJECT017_AGENT_DISPATCH_POLICY",
-                "project017_agent_dispatch_fail_closed_v1",
+                "project017_agent_dispatch_deterministic_admission_v2",
                 'hasOwnProperty.call(params, "isolation")',
                 "isolation_argument_forbidden_in_non_git_project",
-                "previous_agent_dispatch_blocked",
+                "duplicate_subagent_provider_proposal_coalesced",
                 "project017DispatchAudit",
                 'pi.on("tool_call"',
                 'pi.on("tool_result"',
                 "isError: true",
             )
         ),
-        "bridge blocks forbidden isolation, locks later dispatch, and preserves a parent-attempt audit payload",
+        "bridge blocks unsafe dispatches, coalesces repeated provider proposals, and preserves both audit layers",
+    )
+    check(
+        "bridge:deterministic-admission-boundary",
+        all(
+            token in bridge_source
+            for token in (
+                'executionMode: "sequential"',
+                "completedRoleResults",
+                'disposition: "coalesced"',
+                "providerProposalCount",
+                "canonicalToolCallId",
+            )
+        ),
+        "Agent calls execute in source order and duplicate role proposals reuse a canonical completed result",
+    )
+    check(
+        "bridge:single-tool-provider-policy",
+        all(
+            token in bridge_source
+            for token in (
+                'pi.on("before_provider_request"',
+                "enforceSingleToolTurn",
+                "disable_parallel_tool_use: true",
+                'type: "auto"',
+            )
+        ),
+        "Supervisor requests use Anthropic at-most-one Agent call semantics",
     )
     check(
         "bridge:no-spawn-source-copy",
-        len(bridge_source) < 12000
+        len(bridge_source) < 45000
         and "createAgentSession" not in bridge_source
         and "manager.spawn" not in bridge_source
         and "spawnAndWait" not in bridge_source,
         "bridge does not copy the upstream AgentSession or spawn implementation",
+    )
+    check(
+        "bridge:strategy-cross-packet-validation",
+        all(
+            token in bridge_source
+            for token in (
+                "strategyReferenceCatalog",
+                "validateStrategyReferences",
+                "strategy_cross_packet_reference_validation_failed",
+                "project017StrategyReferenceValidation",
+            )
+        ),
+        "bridge rejects strategy results whose IDs are absent from the specialist audit catalog",
+    )
+    check(
+        "bridge:redacted-native-audit",
+        all(
+            token in bridge_source
+            for token in (
+                "native-audit",
+                'layer: "parent_dispatch"',
+                'tool_name: "Agent"',
+                "run_in_background_value",
+                "automatic_retry: false",
+            )
+        ),
+        "bridge persists a redacted parent Agent ledger for native reconciliation",
+    )
+    check(
+        "bridge:execute-parameter-enrichment",
+        all(
+            token in bridge_source
+            for token in (
+                "startedRecorded",
+                "enrichAttemptFromParams",
+                "attempt.workflowRunId ??= workflowRunIdFromParams(params)",
+                "enrichAttemptFromParams(attempt, params)",
+                "run_in_background_false_required",
+                "finishProposal",
+                "provider_proposal_received",
+                "provider_proposal_disposition",
+            )
+        ),
+        "bridge enriches early provider proposals from complete execute parameters before admission",
     )
 
     platform_package = load_json(PLATFORM_ROOT / "package.json")
@@ -816,6 +1053,347 @@ def validate(project_root: Path) -> dict[str, Any]:
         "Profile verification requires authored policy fields while allowing platform-added defaults",
     )
 
+    native_runtime_source = (
+        project_root / "commerce_ops/native_runtime.py"
+    ).read_text(encoding="utf-8")
+    native_models_source = (
+        project_root / "commerce_ops/native_models.py"
+    ).read_text(encoding="utf-8")
+    check(
+        "native-runtime:topology-cardinality-reconciliation",
+        all(
+            token in native_runtime_source
+            for token in (
+                "parent_role_dispatch_count_mismatch",
+                "specialist_tool_cardinality_mismatch",
+                "strategy_dispatch_missing",
+                'subagent_type=item.get("subagent_type")',
+                "diagnostic_packets_available",
+            )
+        )
+        and "subagent_type: str | None = None" in native_models_source,
+        "native reconciliation verifies professional parent topology, specialist tool cardinality, and eligible strategy dispatch from observed audit data",
+    )
+    check(
+        "native-runtime:settled-nonterminal-lifecycle-refresh",
+        all(
+            token in native_runtime_source
+            for token in (
+                "settled_lifecycle_is_stale",
+                'record.platform_status not in SETTLED_PLATFORM_STATUSES',
+                "and not settled_lifecycle_is_stale",
+            )
+        ),
+        "a settled record with a nonterminal platform snapshot is re-observed without resubmitting the workflow",
+    )
+    check(
+        "native-runtime:audit-authoritative-result",
+        all(
+            token in native_models_source
+            for token in (
+                "class NativeAuthoritativeResult",
+                'result_type: Literal["project017_native_audit_result"]',
+                "reported_service_run_ids: list[str] | None",
+                "reported_analysis_run_ids: list[str] | None",
+                "authoritative_result: NativeAuthoritativeResult | None",
+            )
+        )
+        and all(
+            token in native_runtime_source
+            for token in (
+                "_reported_string_list",
+                "reported_services != ledger.service_run_ids",
+                "_build_authoritative_result",
+                "service_run_ids=ledger.service_run_ids",
+                "analysis_run_ids=ledger.analysis_run_ids",
+            )
+        ),
+        "the public final result takes ordered service and analysis IDs from the redacted project audit while retaining model-reported IDs only for reconciliation",
+    )
+    check(
+        "native-runtime:resident-process-state-separated",
+        'observed_execution_state: NativeExecutionState = "pending"'
+        in native_models_source
+        and all(
+            token in native_runtime_source
+            for token in (
+                "audit_execution_settled",
+                "structured_result_matches_run",
+                "observed_execution_settled",
+                "and not observed_execution_settled",
+                '"settled" if observed_execution_settled else "unresolved"',
+            )
+        ),
+        "a completed audited turn settles independently from the resident MiniClaw conversation process status",
+    )
+    check(
+        "native-runtime:provider-proposal-observability",
+        all(
+            token in native_models_source
+            for token in (
+                "class NativeProviderProposal",
+                "class NativeProposalSummary",
+                "coalesced_proposals",
+                "provider_proposals: list[NativeProviderProposal]",
+            )
+        )
+        and all(
+            token in native_runtime_source
+            for token in (
+                "def read_proposals",
+                "provider_proposal_received",
+                "provider_proposal_disposition",
+                "_summarize_proposals",
+            )
+        ),
+        "public native results expose provider proposals separately from the authoritative execution-attempt ledger",
+    )
+    check(
+        "native-runtime:strategy-reference-reconciliation",
+        all(
+            token in native_models_source
+            for token in (
+                "strategy_reference_validation",
+                "strategy_reference_error_codes",
+                "strategy_cross_packet_references_valid",
+            )
+        )
+        and all(
+            token in native_runtime_source
+            for token in (
+                "strategy_cross_packet_reference_validation_failed",
+                'strategy_reference_validation == "failed"',
+                'strategy_reference_validation == "pass"',
+            )
+        ),
+        "native reconciliation publishes explicit strategy cross-packet validation and blocks false completed states",
+    )
+
+    native_start_source = (
+        project_root / "scripts/start-native-runtime.ps1"
+    ).read_text(encoding="utf-8")
+    check(
+        "native-start:profile-sync-before-api",
+        all(
+            token in native_start_source
+            for token in (
+                '"$MiniClawBaseUrl/api/agent-profiles"',
+                "Get-ProfileDifferences",
+                "if ($profileDifferences.Count -gt 0)",
+                "-Method Patch",
+                "Get-ProfileDifferences -Existing $runtimeProfile -Expected $expectedProfile",
+                "The synchronized project017 AgentProfile failed read-back verification.",
+            )
+        )
+        and native_start_source.index('"$MiniClawBaseUrl/api/agent-profiles"')
+        < native_start_source.index('$groupsPayload = Invoke-RestMethod')
+        < native_start_source.index('$apiProcess = Start-Process'),
+        "native startup synchronizes and reads back the authored Profile before checking the Workspace and starting the project API",
+    )
+    check(
+        "native-start:profile-sync-fail-closed",
+        all(
+            token in native_start_source
+            for token in (
+                "Exactly one project017 AgentProfile must already exist",
+                'qwen3.7-plus-2026-05-26',
+                "The target Workspace is not bound to the synchronized project017 AgentProfile ID.",
+                "database_ids_included = $false",
+                "session_created = $false",
+                "model_called = $false",
+            )
+        ),
+        "native startup preserves the authorized Provider, refuses ambiguous Profile or Workspace state, and emits redacted no-model evidence",
+    )
+
+    profile_sync_assessment = load_json(
+        project_root / "artifacts/runtime/native-profile-sync-v4-assessment.json"
+    )
+    check(
+        "runtime-evidence:historical-profile-v4-synchronized",
+        profile_sync_assessment.get("status") == "pass"
+        and profile_sync_assessment.get("profile_version") == 4
+        and all(
+            re.fullmatch(r"[a-f0-9]{64}", value or "")
+            for value in profile_sync_assessment.get("prompt_sha256", {}).values()
+        )
+        and all(
+            profile_sync_assessment.get("checks", {}).get(key) is True
+            for key in (
+                "exactly_one_named_profile",
+                "provider_binding_preserved",
+                "authored_fields_match",
+                "runtime_policy_authored_subset_matches",
+                "workspace_binding_matches",
+                "workspace_execution_mode_host",
+                "workspace_interaction_mode_assistant",
+                "workspace_custom_cwd_matches",
+            )
+        )
+        and profile_sync_assessment.get("checks", {}).get("session_created")
+        is False
+        and profile_sync_assessment.get("checks", {}).get("model_called")
+        is False
+        and not any(profile_sync_assessment.get("redaction", {}).values()),
+        "historical runtime Profile version 4 remains archived separately from the latest native startup synchronization record",
+    )
+
+    full_v3_trace = load_json(
+        project_root / "artifacts/runtime/native-full-v3-redacted-trace.json"
+    )
+    full_v3_assessment = load_json(
+        project_root / "artifacts/runtime/native-full-v3-assessment.json"
+    )
+    bridge_v11 = load_json(
+        project_root / "artifacts/miniclaw-subagent-bridge-validation-v11.json"
+    )
+    bridge_v12 = load_json(
+        project_root / "artifacts/miniclaw-subagent-bridge-validation-v12.json"
+    )
+    pi_extension_v6 = load_json(
+        project_root / "artifacts/pi-extension-runtime-v6.json"
+    )
+    provider_chain_v1 = load_json(
+        project_root / "artifacts/provider-request-chain-validation-v1.json"
+    )
+    root_cause_v1 = load_json(
+        project_root
+        / "artifacts/runtime/native-full-v4-root-cause-diagnosis-v1.json"
+    )
+    check(
+        "runtime-evidence:full-v3-failure-preserved",
+        full_v3_trace.get("workflow_run_id")
+        == "wf_native_20260904T075456Z_ed8e4d4f55"
+        and full_v3_trace.get("project_audit", {}).get("total_attempts") == 12
+        and full_v3_trace.get("project_audit", {}).get("failed_or_blocked_attempts")
+        == 3
+        and full_v3_trace.get("specialist_tools", {}).get(
+            "duplicate_live_analysis_blocked_before_mcp"
+        )
+        is True
+        and full_v3_trace.get("parent_route", {}).get(
+            "duplicate_strategy_dispatch_same_turn_observed"
+        )
+        is True
+        and full_v3_assessment.get("overall_status")
+        == "strict_fail_preserved_no_rerun",
+        "the single full v3 run preserves its duplicate live analysis and duplicate strategy dispatch as a strict failure",
+    )
+    check(
+        "runtime-evidence:bridge-v11-deterministic-admission-no-model",
+        bridge_v11.get("status") == "pass"
+        and bridge_v11.get("checks_total") == 36
+        and bridge_v11.get("checks_failed") == 0
+        and bridge_v11.get("guard_validation", {})
+        .get("duplicate_role_proposal_result", {})
+        .get("second_result_disposition")
+        == "coalesced"
+        and bridge_v11.get("guard_validation", {})
+        .get("duplicate_role_proposal_result", {})
+        .get("admitted_attempt_count")
+        == 1
+        and bridge_v11.get("provider_request_policy", {}).get(
+            "supervisor_disable_parallel_tool_use"
+        )
+        is True
+        and bridge_v11.get("provider_request_policy", {}).get(
+            "specialist_disable_parallel_tool_use"
+        )
+        is True
+        and bridge_v11.get("runtime", {}).get("model_called_by_this_validator")
+        is False,
+        "bridge v11 verifies without a model that Agent calls are serialized and duplicate role proposals coalesce to one admitted attempt",
+    )
+    check(
+        "runtime-evidence:bridge-v12-strategy-reference-validation-no-model",
+        bridge_v12.get("status") == "pass"
+        and bridge_v12.get("checks_total") == 39
+        and bridge_v12.get("checks_failed") == 0
+        and all(
+            next(
+                (
+                    item.get("status")
+                    for item in bridge_v12.get("checks", [])
+                    if item.get("check_id") == check_id
+                ),
+                None,
+            )
+            == "pass"
+            for check_id in (
+                "bridge:strategy-cross-packet-validation-source",
+                "guard:strategy-valid-references-pass",
+                "guard:strategy-invented-references-fail",
+            )
+        )
+        and bridge_v12.get("runtime", {}).get("model_called_by_this_validator")
+        is False,
+        "bridge v12 proves without a model that audited strategy references pass and invented IDs fail",
+    )
+    check(
+        "runtime-evidence:pi-extension-v6-reference-catalog",
+        pi_extension_v6.get("status") == "pass"
+        and pi_extension_v6.get("checks_total") == 23
+        and pi_extension_v6.get("checks_failed") == 0
+        and next(
+            (
+                item.get("status")
+                for item in pi_extension_v6.get("checks", [])
+                if item.get("check_id") == "audit:analysis-reference-catalog"
+            ),
+            None,
+        )
+        == "pass"
+        and pi_extension_v6.get("evidence_boundary", {}).get(
+            "real_model_called"
+        )
+        is False,
+        "Pi extension v6 records only the cross-packet ID catalog needed by the strategy guard",
+    )
+    check(
+        "runtime-evidence:provider-wire-chain-no-model",
+        provider_chain_v1.get("status") == "pass"
+        and provider_chain_v1.get("checks_total") == 14
+        and provider_chain_v1.get("checks_failed") == 0
+        and all(
+            provider_chain_v1.get("observations", {})
+            .get(role, {})
+            .get("serialized_request", {})
+            .get("tool_choice", {})
+            .get("disable_parallel_tool_use")
+            is True
+            for role in ("supervisor", "specialist")
+        )
+        and provider_chain_v1.get("evidence_boundary", {}).get(
+            "real_network_request_sent"
+        )
+        is False
+        and provider_chain_v1.get("evidence_boundary", {}).get(
+            "real_model_called"
+        )
+        is False,
+        "Pi's real Anthropic serializer retains the project hook field in the outbound JSON body without network or model execution",
+    )
+    check(
+        "runtime-evidence:v4-root-cause-diagnosis",
+        root_cause_v1.get("status")
+        == "local_fixes_pass_remote_semantics_unresolved"
+        and root_cause_v1.get("provider_request_chain", {}).get(
+            "root_cause_class"
+        )
+        == "provider_behavioral_contract_mismatch"
+        and root_cause_v1.get("lifecycle_diagnosis", {})
+        .get("project_fix", {})
+        .get("platform_status_preserved_without_rewrite")
+        is True
+        and root_cause_v1.get("service_run_id_reconciliation", {})
+        .get("project_fix", {})
+        .get("model_id_mismatch_can_replace_audit_ids")
+        is False
+        and root_cause_v1.get("evidence_boundary", {}).get("model_called")
+        is False,
+        "v4 root-cause evidence excludes a local serializer bypass, separates resident process lifecycle, and makes project audit IDs authoritative",
+    )
+
     content_v2_trace = load_json(
         project_root
         / "artifacts/runtime/smoke-content-v2-dispatch-guard-redacted-trace.json"
@@ -853,7 +1431,8 @@ def validate(project_root: Path) -> dict[str, Any]:
                 "Plugin imported: `false`",
                 "AgentSession executed: `true`",
                 "Supervisor plus one specialist executed: `true`",
-                "Full one-main-four-specialist workflow executed: `false`",
+                "Full one-main-four-specialist workflow executed: `true`",
+                "Full one-main-four-specialist strict acceptance: `false`",
                 "静态/无模型 harness",
             )
         ),
@@ -874,12 +1453,13 @@ def validate(project_root: Path) -> dict[str, Any]:
             for token in (
                 "activity-end 聚合值",
                 "显式 `toolCall`",
-                "正常回收状态是 idle",
-                "最多等待 20 秒",
+                "默认 `idleTimeout=1800000` 毫秒",
+                "`observed_execution_state`",
+                "`authoritative_result`",
                 "不互相改写",
             )
         ),
-        "runtime evidence uses explicit child calls and recognizes idle settlement",
+        "runtime evidence uses explicit child calls, audit authority, and separate resident-process lifecycle state",
     )
 
     failed = [item for item in checks if item["status"] == "fail"]

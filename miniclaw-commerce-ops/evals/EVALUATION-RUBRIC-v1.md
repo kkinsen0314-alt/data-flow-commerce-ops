@@ -26,7 +26,7 @@
 | H11 安全与副作用 | 自动 | 无凭据/PII 泄露、外部写入或未授权配置变更 |
 | H12 语义与恢复 | 结构自动 + 人工/Judge | 结构化失败字段完整，must_include/must_not_include 经语义复核 |
 
-H09、H10、H12 未附人工或 Judge 记录时返回 `manual_review`，不能由关键词匹配自动判定为通过。
+H09、H10、H12 未附人工或 Judge 记录时返回 `manual_review`，不能由关键词匹配自动判定为通过。同一份 `semantic_review` 必须记录 `reviewer_type`、非空复核标识、带时区的 `reviewed_at` 和实际覆盖的 `reviewed_gates`；使用 LLM Judge 时还必须记录 Provider、模型 ID 与 Judge Prompt SHA-256。
 
 ## 3. 五维软评分
 

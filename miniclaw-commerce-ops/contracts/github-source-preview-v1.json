@@ -1,0 +1,111 @@
+{
+  "schema_version": "1.0",
+  "record_type": "commerce_ops_github_source_preview_contract",
+  "release_name": "miniclaw-commerce-ops",
+  "release_date": "2026-10-02",
+  "evidence_snapshot": {
+    "fixture_preflight": "30/30",
+    "real_agent_evaluation": "5/30 executed",
+    "semantic_review": "0/5",
+    "quality_release_status": "blocked"
+  },
+  "root_file_mappings": {
+    ".gitignore": ".gitignore",
+    "GITHUB-PREVIEW.md": "GITHUB-PREVIEW.md",
+    "README.md": "docs/GITHUB-README-v2.md",
+    "requirements.txt": "requirements.txt"
+  },
+  "recursive_roots": [
+    ".pi",
+    "commerce_ops",
+    "config",
+    "contracts",
+    "data/fixtures",
+    "evals",
+    "integrations",
+    "native_app",
+    "native_web",
+    "web"
+  ],
+  "included_docs": [
+    "docs/AGENT-SPEC-v2.md",
+    "docs/DATA-FLOW-AUTHENTICATED-API-v1.md",
+    "docs/DATA-FLOW-CONVERSATIONS-v1.md",
+    "docs/DATA-FLOW-DESIGN-SYSTEM-v1.md",
+    "docs/DATA-FLOW-VISUALIZATIONS-v1.md",
+    "docs/DATA-SOURCE-CONNECTORS-v1.md",
+    "docs/EVALUATION-DELIVERY-GATE-v1.md",
+    "docs/EVIDENCE-BOUNDARY.md",
+    "docs/GITHUB-README-v2.md",
+    "docs/GITHUB-REPOSITORY-README.md",
+    "docs/MINICLAW-INTEGRATION-v2.md",
+    "docs/MINICLAW-NATIVE-RUNTIME-v1.md",
+    "docs/NATIVE-RECOVERY-v1.md",
+    "docs/RUNTIME-OBSERVABILITY-v1.md",
+    "docs/RELEASE-NOTES-2026-10-02.md",
+    "docs/TOOL-CONTRACTS-v1.md",
+    "docs/TOOL-LAYER-VALIDATION-v1.md",
+    "docs/WORKFLOW-DATA-CONTRACT-v2.md"
+  ],
+  "included_scripts": [
+    "scripts/build-data-flow-web.mjs",
+    "scripts/build-github-source-preview.py",
+    "scripts/run-commerce-ops-evals.py",
+    "scripts/run-native-eval-batch.py",
+    "scripts/start-native-runtime.ps1",
+    "scripts/verify-evaluation-delivery-readiness.py",
+    "scripts/verify-miniclaw-static-config.py",
+    "scripts/verify-miniclaw-subagent-bridge.mjs",
+    "scripts/verify-native-recovery.py",
+    "scripts/verify-period-13-data.py",
+    "scripts/verify-provider-request-chain.mjs",
+    "scripts/verify-workflow-identity-guards.mjs"
+  ],
+  "included_artifacts": [
+    "artifacts/data-flow-api-browser-validation.json",
+    "artifacts/data-flow-conversations-browser-validation.json",
+    "artifacts/data-flow-visualizations-browser-validation.json",
+    "artifacts/design-system/verification.json",
+    "artifacts/evals/evaluation-executor-selftest-v1.json",
+    "artifacts/evals/fixture-preflight-v1.json",
+    "artifacts/native-recovery-validation-v1.json",
+    "artifacts/period-13-data-validation-v1.json"
+  ],
+  "test_globs": [
+    "tests/*.py",
+    "tests/*.mjs",
+    "tests/*.cjs"
+  ],
+  "forbidden_path_parts": [
+    ".agents",
+    ".git",
+    ".venv",
+    "__pycache__",
+    "node_modules",
+    "outputs",
+    "release",
+    "runtime",
+    "tmp"
+  ],
+  "forbidden_file_names": [
+    ".env",
+    "skills-lock.json"
+  ],
+  "forbidden_suffixes": [
+    ".db",
+    ".jsonl",
+    ".key",
+    ".log",
+    ".p12",
+    ".pem",
+    ".pyc",
+    ".sqlite",
+    ".sqlite3",
+    ".zip"
+  ],
+  "required_disclosures": [
+    "source preview",
+    "真实 Agent 评测已执行 5/30",
+    "http://127.0.0.1:3017/login"
+  ]
+}

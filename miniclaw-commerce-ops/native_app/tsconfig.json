@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noUncheckedSideEffectImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "typeRoots": [
+      "../../project014-miniclaw-deployment/upstream/miniclaw/web/node_modules/@types"
+    ],
+    "types": ["react", "react-dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../../project014-miniclaw-deployment/upstream/miniclaw/web/src/*"],
+      "@dataflow/*": ["./src/*"],
+      "react-router-dom": ["../../project014-miniclaw-deployment/upstream/miniclaw/web/node_modules/react-router-dom"],
+      "lucide-react": ["../../project014-miniclaw-deployment/upstream/miniclaw/web/node_modules/lucide-react"],
+      "recharts": ["../../project014-miniclaw-deployment/upstream/miniclaw/web/node_modules/recharts"]
+    }
+  },
+  "include": [
+    "src",
+    "../../project014-miniclaw-deployment/upstream/miniclaw/web/src/vite-env.d.ts"
+  ]
+}

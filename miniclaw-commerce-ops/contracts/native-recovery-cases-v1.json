@@ -1,0 +1,199 @@
+{
+  "schema_version": "1.0",
+  "record_type": "miniclaw_native_recovery_case_catalog",
+  "description": "不调用模型的原生任务失败恢复契约；所有场景均禁止自动重试。",
+  "cases": [
+    {
+      "case_id": "RECOVERY-001",
+      "name": "已接受任务仍在运行",
+      "snapshot": {
+        "phase": "running",
+        "submission_state": "accepted",
+        "terminal_status": null,
+        "operator_view_state": "processing"
+      },
+      "expected": {
+        "scenario": "active_run_observation",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": true,
+        "new_run_policy": "forbidden_until_original_resolved",
+        "required_allowed_steps": ["read_same_run", "read_task_catalog"],
+        "required_forbidden_steps": [
+          "automatic_retry",
+          "create_replacement_run_before_resolution"
+        ]
+      }
+    },
+    {
+      "case_id": "RECOVERY-002",
+      "name": "预检失败且尚未提交",
+      "snapshot": {
+        "phase": "settled",
+        "submission_state": "not_attempted",
+        "terminal_status": "blocked",
+        "operator_view_state": "unavailable"
+      },
+      "expected": {
+        "scenario": "preflight_blocked",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": false,
+        "new_run_policy": "allowed_after_correction_and_new_authorization",
+        "required_allowed_steps": [
+          "inspect_runtime_configuration",
+          "correct_configuration_or_input",
+          "create_new_run_after_authorization"
+        ],
+        "required_forbidden_steps": [
+          "automatic_retry",
+          "reuse_idempotency_key_for_changed_payload"
+        ]
+      }
+    },
+    {
+      "case_id": "RECOVERY-003",
+      "name": "建会话响应缺少会话标识",
+      "snapshot": {
+        "phase": "settled",
+        "submission_state": "not_attempted",
+        "terminal_status": "uncertain",
+        "operator_view_state": "unavailable"
+      },
+      "expected": {
+        "scenario": "submission_outcome_uncertain",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": true,
+        "new_run_policy": "forbidden_until_original_resolved",
+        "required_allowed_steps": [
+          "read_same_run",
+          "inspect_redacted_audit",
+          "escalate_to_administrator"
+        ],
+        "required_forbidden_steps": [
+          "automatic_retry",
+          "create_replacement_run_before_resolution"
+        ]
+      }
+    },
+    {
+      "case_id": "RECOVERY-004",
+      "name": "提交变更结果不确定",
+      "snapshot": {
+        "phase": "settled",
+        "submission_state": "uncertain",
+        "terminal_status": "uncertain",
+        "operator_view_state": "unavailable"
+      },
+      "expected": {
+        "scenario": "submission_outcome_uncertain",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": true,
+        "new_run_policy": "forbidden_until_original_resolved",
+        "required_allowed_steps": [
+          "read_same_run",
+          "inspect_redacted_audit",
+          "escalate_to_administrator"
+        ],
+        "required_forbidden_steps": [
+          "automatic_retry",
+          "create_replacement_run_before_resolution"
+        ]
+      }
+    },
+    {
+      "case_id": "RECOVERY-005",
+      "name": "提交后执行被明确阻断",
+      "snapshot": {
+        "phase": "settled",
+        "submission_state": "attempted",
+        "terminal_status": "blocked",
+        "operator_view_state": "unavailable"
+      },
+      "expected": {
+        "scenario": "execution_blocked",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": false,
+        "new_run_policy": "allowed_after_correction_and_new_authorization",
+        "required_allowed_steps": [
+          "inspect_redacted_audit",
+          "operator_review",
+          "create_new_run_after_authorization"
+        ],
+        "required_forbidden_steps": [
+          "automatic_retry",
+          "rewrite_historical_evidence"
+        ]
+      }
+    },
+    {
+      "case_id": "RECOVERY-006",
+      "name": "部分结果需要运营复核",
+      "snapshot": {
+        "phase": "settled",
+        "submission_state": "accepted",
+        "terminal_status": "partial",
+        "operator_view_state": "needs_review"
+      },
+      "expected": {
+        "scenario": "partial_operator_review",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": false,
+        "new_run_policy": "optional_after_operator_review_and_new_authorization",
+        "required_allowed_steps": [
+          "operator_review",
+          "inspect_redacted_audit",
+          "create_new_run_after_authorization"
+        ],
+        "required_forbidden_steps": [
+          "automatic_retry",
+          "expose_raw_model_output"
+        ]
+      }
+    },
+    {
+      "case_id": "RECOVERY-007",
+      "name": "已完成但运营投影未通过",
+      "snapshot": {
+        "phase": "settled",
+        "submission_state": "accepted",
+        "terminal_status": "completed",
+        "operator_view_state": "unavailable"
+      },
+      "expected": {
+        "scenario": "operator_projection_unavailable",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": false,
+        "new_run_policy": "allowed_after_correction_and_new_authorization",
+        "required_allowed_steps": [
+          "inspect_redacted_audit",
+          "correct_operator_projection_contract",
+          "operator_review"
+        ],
+        "required_forbidden_steps": [
+          "automatic_retry",
+          "expose_raw_model_output"
+        ]
+      }
+    },
+    {
+      "case_id": "RECOVERY-008",
+      "name": "正常完成且运营结果可用",
+      "snapshot": {
+        "phase": "settled",
+        "submission_state": "accepted",
+        "terminal_status": "completed",
+        "operator_view_state": "ready"
+      },
+      "expected": {
+        "scenario": "completed_no_recovery",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": false,
+        "new_run_policy": "not_needed",
+        "required_allowed_steps": ["no_action_required"],
+        "required_forbidden_steps": [
+          "automatic_retry",
+          "write_external_business_system"
+        ]
+      }
+    }
+  ]
+}

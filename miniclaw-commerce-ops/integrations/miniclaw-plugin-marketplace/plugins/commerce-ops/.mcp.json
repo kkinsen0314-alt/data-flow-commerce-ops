@@ -1,0 +1,14 @@
+{
+  "commerce_ops": {
+    "command": "python",
+    "args": [
+      "-B",
+      "-m",
+      "commerce_ops.mcp_server"
+    ],
+    "cwd": "D:\\Workspace\\project017-miniclaw-commerce-ops",
+    "env": {
+      "COMMERCE_OPS_DATA_ROOT": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures"
+    }
+  }
+}

@@ -3,11 +3,11 @@
 ## 1. 文档状态
 
 - spec_version: `2.0`
-- status: `contract_tools_eval_single_specialist_runtime_and_dispatch_guard_validated`
+- status: `native_strategy_v1_lifecycle_settled_decision_packet_contract_failed_prompt_repaired`
 - workflow_schema: `contracts/commerce-ops-workflow-v1.schema.json`
 - synthetic_example: `contracts/synthetic-commerce-workflow-example.json`
-- 当前证据：一主四专职责、五工具边界、Pydantic/JSON Schema、跨包引用、Python/FastAPI/stdio MCP、Pi extension、真实 `DefaultResourceLoader` synthetic harness、30-case 评测基础设施、Supervisor + 单个直播专业子 Agent 的真实模型 synthetic 冒烟，以及内容增长失败后新增的父级派发 fail-closed 兼容桥均已在 project017 分层验证。
-- 当前不代表：修复后的 authored Profile 已写入运行数据库、内容增长已按修复后配置重跑、Plugin 已导入/启用、四个专业角色已完整运行或 30 条真实模型评测已执行，也不代表真实电商数据或经营效果已经验证。
+- 当前证据：一主四专职责、五工具边界、Pydantic/JSON Schema、跨包引用、Python/FastAPI/stdio MCP、Pi extension、真实 `DefaultResourceLoader` synthetic harness、30-case 评测基础设施、Supervisor + 单个直播专业子 Agent 的严格 synthetic 冒烟，以及历史内容增长 v1—v4 的父级派发、单回合单工具和最终报告契约审计均已在 project017 分层验证。原生内容增长 v1、渠道归因 v1 和策略 v1 又分别通过 `/v1/native` 证明单次有效提交与父子合并账本；三者后续只读复查都回收到 `idle/settled`。策略 v1 同时保留 DecisionPacket 严格契约失败证据。
+- 当前不代表：历史内容增长父级调用的每个参数都有精确审计、Plugin 已导入/启用、策略 DecisionPacket 已通过严格契约、完整一主四专已运行、30 条真实模型评测已执行，也不代表真实电商数据或经营效果已经验证。
 
 ## 2. 定位与业务目标
 
@@ -27,7 +27,9 @@
 | `attribution_lead_analyst` | 检查本任务数据并分析渠道、线索来源、分配、跟进、负责人和订单转化 | `inspect_commerce_data`、`analyze_attribution_and_leads`、`drilldown_commerce_metric` | 只有稳定关联键时才做归因；不因线索数量评价个人能力；无成本字段不算 ROI |
 | `commerce_review_strategist` | 读取通过门槛的 `AnalysisPacket`，生成行动、责任岗位、时限、复验指标和护栏 | `tools=[]` | 不读取原始数据；不调用计算工具；不脱离 evidence 生成原因或收益结论 |
 
-角色 allowlist 是项目行为契约。Pi Subagent frontmatter 使用 `ext:<extension>/<tool>` 形成工具范围；v3 已验证直播专业角色在真实 AgentSession 中只显式调用 inspect 与直播分析，Supervisor 未直接调用业务工具。内容专业角色已完成 inspect→短视频分析子链，但父级首次派发失败后发生第二次派发，严格端到端冒烟未通过；修复后的父级门控目前只完成无模型验证。归因和策略角色仍需分别运行验证。
+角色 allowlist 是项目行为契约。Pi Subagent frontmatter 使用 `ext:<extension>/<tool>` 形成工具范围；直播 v3 已验证专业角色在真实 AgentSession 中只显式调用 inspect 与直播分析，Supervisor 未直接调用业务工具。历史内容增长 v4 已验证父级只派发一次、isolation 省略、专业角色分两个 assistant 回合完成一次 inspect 和一次固定参数短视频分析，但最终回复遗漏父级 Agent 尝试；原生内容增长 v1 已由 `/v1/native` 的项目侧审计证明相同业务链和完整父子账本准确。原生渠道归因 v1 已验证三份跨表 synthetic 数据、稳定关联键、业务 partial、ROI/因果边界、精确前台参数和完整父子账本。策略角色 v1 已真实运行、保持零工具并完成后续 lifecycle 回收，但 DecisionPacket 严格契约失败；修复后的 Prompt 仍需新的模型验收。
+
+Provider proposal 与执行尝试现在是两层状态：父级 `Agent` 和专业业务工具声明 `executionMode=sequential`，Pi 按同一 assistant 响应中的原始顺序逐个执行；首个合法角色/阶段 proposal 进入 admitted 并创建 attempt，已完成同角色/阶段的重复 proposal 进入 coalesced 并复用首个结果，不创建第二次 Agent 或 MCP service run。参数违规和真实失败仍进入 rejected 加 blocked/failed attempt。Supervisor 的最终尝试账本只统计 admitted/rejected 后形成的实际尝试，proposal 汇总由原生 API 单列公开。
 
 ## 4. Agent Loop
 
@@ -67,6 +69,7 @@
 - action 必须引用实际存在的 finding 与 evidence。
 - verification metric 必须指向现有 dataset，并说明方向、基线、目标、复验时间和方法。
 - 策略 Agent 不得把 limitation、assumption 或 missing_evidence 改写成事实。
+- DecisionPacket 必须精确遵守 Pydantic/JSON Schema 的固定字面值、ID 模式、字段类型、非空引用和 `additionalProperties=false`；未通过 `DecisionPacket.model_validate()` 不得进入交付阶段。
 
 ## 6. 上下文策略
 
@@ -74,7 +77,7 @@
 - 专业 Agent 只获得所需 manifest、业务目标、允许维度和自身领域数据引用。
 - 策略 Agent 只获得通过校验的 AnalysisPacket，不获得原始文件路径或个人明细。
 - DeliveryPackage 只引用聚合 evidence、finding、action、trace 和未解决事项。
-- 阶段 5 的轨迹模板和执行器已要求记录 Prompt、模型、工具说明、上下文策略和代码版本；v3 冒烟已有独立脱敏运行记录，但尚未形成 30-case baseline/candidate 版本记录。
+- 阶段 5 的轨迹模板和执行器已要求记录 Prompt、模型、工具说明、上下文策略和代码版本；直播 v3、历史内容增长 v1—v4、原生内容增长 v1 与原生渠道归因 v1 已有独立脱敏运行记录，但尚未形成 30-case baseline/candidate 版本记录。原生运行未采集模型请求数、token 或准确成本，这些值保持 `null/unknown`。
 
 ## 7. terminal_status
 
@@ -124,4 +127,4 @@
 7. synthetic、数据质量、敏感字段和失败状态保真。
 8. 没有越权工具、盲目重试、凭据泄露或经营效果冒领。
 
-当前完成契约、行为 Spec、无模型确定性工具层、Pi extension 注册、同版本 Pi Loader synthetic harness、30-case 离线评测基础设施、一条 Supervisor + 直播专业子 Agent 的真实模型 synthetic 冒烟，以及 `Agent` worktree 拒绝、会话锁止和父级尝试审计的 `25/25` 无模型门控验证。内容增长 v1 的专业子链已运行，但旧父级路由与最终报告仍是失败证据；修复后 Profile 已落库，内容增长 v2 却在模型推理前被 Provider `Arrearage` 阻断，因此 Agent 门控仍未重跑验证。v3 不是正式 30-case，也未覆盖归因、策略、完整一主四专或失败恢复。H01—H12 中 H09、H10、H12 语义项仍须由人工或 Judge 记录；fixture preflight 和执行器测试不形成 Agent 通过率。
+当前完成契约、行为 Spec、无模型确定性工具层、Pi extension 注册、同版本 Pi Loader synthetic harness、30-case 离线评测基础设施，以及分层真实模型 synthetic 冒烟。原生内容增长与渠道归因的业务和合并账本通过。策略 v1 已真实执行并遵守两次父级前台派发与零工具边界，后续生命周期也回收到 `idle/settled`；但完整 DecisionPacket 有 20 个 Pydantic 错误，严格契约失败。角色 Prompt 已无模型修复并通过静态与契约检查，尚未模型复验。当前仍未覆盖完整一主四专、失败恢复或正式 30-case。H01—H12 中 H09、H10、H12 语义项仍须由人工或 Judge 记录；fixture preflight 和执行器测试不形成 Agent 通过率。

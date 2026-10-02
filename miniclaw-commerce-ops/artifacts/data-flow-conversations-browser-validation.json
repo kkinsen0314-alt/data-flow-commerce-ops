@@ -1,0 +1,24 @@
+{
+  "status": "pass",
+  "generated_at": "2026-10-02T04:36:38.680Z",
+  "checks": [
+    "native_login_and_unified_business_navigation",
+    "persistent_conversation_created_in_native_workspace",
+    "per_message_fee_confirmation_and_single_submission",
+    "assistant_reply_polling_and_reload_persistence",
+    "validated_analysis_result_context_linked_without_internal_ids",
+    "lost_response_queries_original_submission_without_resend",
+    "validated_dashboard_context_is_linked_without_exposing_transport_prompt",
+    "uncertain_submission_remains_read_only_and_not_retried",
+    "mobile_conversation_workspace_without_horizontal_overflow",
+    "expired_session_returns_to_native_login"
+  ],
+  "backend": "real project017 conversation API with temporary persistent store",
+  "mocked": [
+    "MiniClaw identity provider",
+    "MiniClaw session transport",
+    "model reply completion"
+  ],
+  "real_model_calls": 0,
+  "simulated_submissions": 3
+}

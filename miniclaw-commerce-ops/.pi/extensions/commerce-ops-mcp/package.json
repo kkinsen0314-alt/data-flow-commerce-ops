@@ -1,0 +1,11 @@
+{
+  "name": "project017-commerce-ops-pi-extension",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@earendil-works/pi-coding-agent": "0.84.2",
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "typebox": "1.3.7"
+  }
+}

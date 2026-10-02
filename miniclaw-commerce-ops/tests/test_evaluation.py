@@ -23,7 +23,11 @@ def case_by_id(case_id: str) -> dict:
 def semantic_review(case: dict) -> dict:
     return {
         "status": "passed",
+        "reviewer_type": "human",
         "reviewer": "unit_test_reviewer",
+        "reviewed_at": "2026-09-10T12:30:00+08:00",
+        "reviewed_gates": ["H09", "H10", "H12"],
+        "judge": None,
         "must_include": {
             item: True for item in case["expected"]["must_include"]
         },
@@ -204,6 +208,48 @@ class TraceScoringTests(unittest.TestCase):
         self.assertIsNone(gates["H09"]["passed"])
         self.assertIsNone(gates["H10"]["passed"])
         self.assertIsNone(gates["H12"]["passed"])
+        self.assertEqual(result["outcome"], "manual_review")
+
+    def test_boundary_assertions_without_reviewer_metadata_do_not_pass(self):
+        case = case_by_id("REFUSAL-001")
+        observed = common_observed(case, review=True)
+        observed["semantic_review"] = {
+            "status": "passed",
+            "reviewer": "",
+            "must_include": {
+                item: True for item in case["expected"]["must_include"]
+            },
+            "must_not_include": {
+                item: True for item in case["expected"]["must_not_include"]
+            },
+        }
+
+        result = score_case(case, trace(case, observed))
+
+        gates = {gate["gate_id"]: gate for gate in result["hard_gates"]}
+        self.assertIsNone(gates["H09"]["passed"])
+        self.assertIsNone(gates["H10"]["passed"])
+        self.assertIsNone(gates["H12"]["passed"])
+        self.assertEqual(result["outcome"], "manual_review")
+
+    def test_llm_judge_review_requires_reproducible_judge_identity(self):
+        case = case_by_id("REFUSAL-001")
+        observed = common_observed(case, review=True)
+        observed["semantic_review"].update({
+            "reviewer_type": "llm_judge",
+            "judge": {
+                "provider": "",
+                "model_id": "judge-model",
+                "prompt_sha256": "invalid",
+            },
+        })
+
+        result = score_case(case, trace(case, observed))
+
+        gates = {gate["gate_id"]: gate for gate in result["hard_gates"]}
+        self.assertTrue(all(gates[gate_id]["passed"] is None for gate_id in (
+            "H09", "H10", "H12"
+        )))
         self.assertEqual(result["outcome"], "manual_review")
 
     def test_reviewed_content_trace_passes_all_gates(self):

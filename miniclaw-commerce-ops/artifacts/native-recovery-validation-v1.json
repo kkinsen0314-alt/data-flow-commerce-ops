@@ -1,0 +1,307 @@
+{
+  "schema_version": "1.0",
+  "record_type": "miniclaw_native_recovery_validation",
+  "generated_at": "2026-09-10T04:23:59.111824+00:00",
+  "source_catalog": "contracts/native-recovery-cases-v1.json",
+  "execution_mode": "deterministic_no_model",
+  "model_called": false,
+  "automatic_retry_attempted": false,
+  "case_count": 8,
+  "passed_count": 8,
+  "failed_count": 0,
+  "status": "pass",
+  "cases": [
+    {
+      "case_id": "RECOVERY-001",
+      "name": "已接受任务仍在运行",
+      "status": "pass",
+      "checks": {
+        "scenario": true,
+        "automatic_retry_allowed": true,
+        "same_run_observation_required": true,
+        "new_run_policy": true,
+        "required_allowed_steps": true,
+        "required_forbidden_steps": true
+      },
+      "actual_plan": {
+        "schema_version": "1.0",
+        "result_type": "miniclaw_native_recovery_plan",
+        "source": "native_runtime_state_only",
+        "scenario": "active_run_observation",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": true,
+        "new_run_policy": "forbidden_until_original_resolved",
+        "allowed_steps": [
+          "read_same_run",
+          "read_task_catalog"
+        ],
+        "forbidden_steps": [
+          "automatic_retry",
+          "reuse_idempotency_key_for_changed_payload",
+          "expose_raw_model_output",
+          "rewrite_historical_evidence",
+          "write_external_business_system",
+          "create_replacement_run_before_resolution"
+        ],
+        "resolution_gate": "继续只读观察同一任务，直到任务结算或被明确判定为阻断/不确定。",
+        "operator_message": "分析仍在处理中，请继续查看当前任务，不要重复提交。"
+      }
+    },
+    {
+      "case_id": "RECOVERY-002",
+      "name": "预检失败且尚未提交",
+      "status": "pass",
+      "checks": {
+        "scenario": true,
+        "automatic_retry_allowed": true,
+        "same_run_observation_required": true,
+        "new_run_policy": true,
+        "required_allowed_steps": true,
+        "required_forbidden_steps": true
+      },
+      "actual_plan": {
+        "schema_version": "1.0",
+        "result_type": "miniclaw_native_recovery_plan",
+        "source": "native_runtime_state_only",
+        "scenario": "preflight_blocked",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": false,
+        "new_run_policy": "allowed_after_correction_and_new_authorization",
+        "allowed_steps": [
+          "inspect_runtime_configuration",
+          "correct_configuration_or_input",
+          "create_new_run_after_authorization"
+        ],
+        "forbidden_steps": [
+          "automatic_retry",
+          "reuse_idempotency_key_for_changed_payload",
+          "expose_raw_model_output",
+          "rewrite_historical_evidence",
+          "write_external_business_system"
+        ],
+        "resolution_gate": "修正配置或输入，通过预检，并由操作者重新确认模型费用；新任务必须使用新的幂等键。",
+        "operator_message": "任务尚未提交，请修正配置或输入后重新确认并创建新任务。"
+      }
+    },
+    {
+      "case_id": "RECOVERY-003",
+      "name": "建会话响应缺少会话标识",
+      "status": "pass",
+      "checks": {
+        "scenario": true,
+        "automatic_retry_allowed": true,
+        "same_run_observation_required": true,
+        "new_run_policy": true,
+        "required_allowed_steps": true,
+        "required_forbidden_steps": true
+      },
+      "actual_plan": {
+        "schema_version": "1.0",
+        "result_type": "miniclaw_native_recovery_plan",
+        "source": "native_runtime_state_only",
+        "scenario": "submission_outcome_uncertain",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": true,
+        "new_run_policy": "forbidden_until_original_resolved",
+        "allowed_steps": [
+          "read_same_run",
+          "read_task_catalog",
+          "inspect_redacted_audit",
+          "escalate_to_administrator"
+        ],
+        "forbidden_steps": [
+          "automatic_retry",
+          "reuse_idempotency_key_for_changed_payload",
+          "expose_raw_model_output",
+          "rewrite_historical_evidence",
+          "write_external_business_system",
+          "create_replacement_run_before_resolution"
+        ],
+        "resolution_gate": "先通过同一任务记录和脱敏审计确认原提交是否生效；在原任务结果仍不确定时，不得创建替代任务。",
+        "operator_message": "本次提交状态暂时无法确认。系统不会自动重试，请保留当前任务并联系管理员核对。"
+      }
+    },
+    {
+      "case_id": "RECOVERY-004",
+      "name": "提交变更结果不确定",
+      "status": "pass",
+      "checks": {
+        "scenario": true,
+        "automatic_retry_allowed": true,
+        "same_run_observation_required": true,
+        "new_run_policy": true,
+        "required_allowed_steps": true,
+        "required_forbidden_steps": true
+      },
+      "actual_plan": {
+        "schema_version": "1.0",
+        "result_type": "miniclaw_native_recovery_plan",
+        "source": "native_runtime_state_only",
+        "scenario": "submission_outcome_uncertain",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": true,
+        "new_run_policy": "forbidden_until_original_resolved",
+        "allowed_steps": [
+          "read_same_run",
+          "read_task_catalog",
+          "inspect_redacted_audit",
+          "escalate_to_administrator"
+        ],
+        "forbidden_steps": [
+          "automatic_retry",
+          "reuse_idempotency_key_for_changed_payload",
+          "expose_raw_model_output",
+          "rewrite_historical_evidence",
+          "write_external_business_system",
+          "create_replacement_run_before_resolution"
+        ],
+        "resolution_gate": "先通过同一任务记录和脱敏审计确认原提交是否生效；在原任务结果仍不确定时，不得创建替代任务。",
+        "operator_message": "本次提交状态暂时无法确认。系统不会自动重试，请保留当前任务并联系管理员核对。"
+      }
+    },
+    {
+      "case_id": "RECOVERY-005",
+      "name": "提交后执行被明确阻断",
+      "status": "pass",
+      "checks": {
+        "scenario": true,
+        "automatic_retry_allowed": true,
+        "same_run_observation_required": true,
+        "new_run_policy": true,
+        "required_allowed_steps": true,
+        "required_forbidden_steps": true
+      },
+      "actual_plan": {
+        "schema_version": "1.0",
+        "result_type": "miniclaw_native_recovery_plan",
+        "source": "native_runtime_state_only",
+        "scenario": "execution_blocked",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": false,
+        "new_run_policy": "allowed_after_correction_and_new_authorization",
+        "allowed_steps": [
+          "inspect_redacted_audit",
+          "correct_configuration_or_input",
+          "operator_review",
+          "create_new_run_after_authorization"
+        ],
+        "forbidden_steps": [
+          "automatic_retry",
+          "reuse_idempotency_key_for_changed_payload",
+          "expose_raw_model_output",
+          "rewrite_historical_evidence",
+          "write_external_business_system"
+        ],
+        "resolution_gate": "管理员根据脱敏审计确认阻断根因并完成修正；操作者重新确认模型费用后，方可使用新的幂等键创建新任务。",
+        "operator_message": "任务已阻断且没有可交付结果，请由管理员核对后再决定是否新建任务。"
+      }
+    },
+    {
+      "case_id": "RECOVERY-006",
+      "name": "部分结果需要运营复核",
+      "status": "pass",
+      "checks": {
+        "scenario": true,
+        "automatic_retry_allowed": true,
+        "same_run_observation_required": true,
+        "new_run_policy": true,
+        "required_allowed_steps": true,
+        "required_forbidden_steps": true
+      },
+      "actual_plan": {
+        "schema_version": "1.0",
+        "result_type": "miniclaw_native_recovery_plan",
+        "source": "native_runtime_state_only",
+        "scenario": "partial_operator_review",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": false,
+        "new_run_policy": "optional_after_operator_review_and_new_authorization",
+        "allowed_steps": [
+          "operator_review",
+          "inspect_redacted_audit",
+          "create_new_run_after_authorization"
+        ],
+        "forbidden_steps": [
+          "automatic_retry",
+          "reuse_idempotency_key_for_changed_payload",
+          "expose_raw_model_output",
+          "rewrite_historical_evidence",
+          "write_external_business_system"
+        ],
+        "resolution_gate": "先由运营人员阅读结果中的限制和未解决事项；只有需要补充分析时，重新确认模型费用并使用新的幂等键创建范围明确的新任务。",
+        "operator_message": "本次结果可供复核，请先确认限制与缺失项，再决定是否补充分析。"
+      }
+    },
+    {
+      "case_id": "RECOVERY-007",
+      "name": "已完成但运营投影未通过",
+      "status": "pass",
+      "checks": {
+        "scenario": true,
+        "automatic_retry_allowed": true,
+        "same_run_observation_required": true,
+        "new_run_policy": true,
+        "required_allowed_steps": true,
+        "required_forbidden_steps": true
+      },
+      "actual_plan": {
+        "schema_version": "1.0",
+        "result_type": "miniclaw_native_recovery_plan",
+        "source": "native_runtime_state_only",
+        "scenario": "operator_projection_unavailable",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": false,
+        "new_run_policy": "allowed_after_correction_and_new_authorization",
+        "allowed_steps": [
+          "inspect_redacted_audit",
+          "correct_operator_projection_contract",
+          "operator_review",
+          "create_new_run_after_authorization"
+        ],
+        "forbidden_steps": [
+          "automatic_retry",
+          "reuse_idempotency_key_for_changed_payload",
+          "expose_raw_model_output",
+          "rewrite_historical_evidence",
+          "write_external_business_system"
+        ],
+        "resolution_gate": "管理员先定位并修正运营结果投影契约；禁止直接展示原始模型输出。如需重新分析，必须重新授权并使用新的幂等键。",
+        "operator_message": "任务已结束，但结果未通过运营展示校验，请联系管理员处理。"
+      }
+    },
+    {
+      "case_id": "RECOVERY-008",
+      "name": "正常完成且运营结果可用",
+      "status": "pass",
+      "checks": {
+        "scenario": true,
+        "automatic_retry_allowed": true,
+        "same_run_observation_required": true,
+        "new_run_policy": true,
+        "required_allowed_steps": true,
+        "required_forbidden_steps": true
+      },
+      "actual_plan": {
+        "schema_version": "1.0",
+        "result_type": "miniclaw_native_recovery_plan",
+        "source": "native_runtime_state_only",
+        "scenario": "completed_no_recovery",
+        "automatic_retry_allowed": false,
+        "same_run_observation_required": false,
+        "new_run_policy": "not_needed",
+        "allowed_steps": [
+          "no_action_required"
+        ],
+        "forbidden_steps": [
+          "automatic_retry",
+          "reuse_idempotency_key_for_changed_payload",
+          "expose_raw_model_output",
+          "rewrite_historical_evidence",
+          "write_external_business_system"
+        ],
+        "resolution_gate": "结果已完成并通过运营展示校验，无需恢复或重跑。",
+        "operator_message": "任务已完成，可直接查看经营结论和行动建议。"
+      }
+    }
+  ]
+}

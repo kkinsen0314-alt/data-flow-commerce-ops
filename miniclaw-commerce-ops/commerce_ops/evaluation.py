@@ -879,7 +879,62 @@ def _gate_h08(
     )
 
 
+def _semantic_review_metadata_errors(
+    observed: dict[str, Any],
+    gate_id: str,
+) -> tuple[dict[str, Any] | None, list[str]]:
+    review = observed.get("semantic_review")
+    if not isinstance(review, dict) or review.get("status") == "not_reviewed":
+        return None, ["缺少已完成的人工或 Judge 语义复核记录。"]
+    errors: list[str] = []
+    if review.get("status") not in {"passed", "failed"}:
+        errors.append("semantic_review.status 必须为 passed 或 failed")
+    if review.get("reviewer_type") not in {"human", "llm_judge"}:
+        errors.append("semantic_review.reviewer_type 必须为 human 或 llm_judge")
+    reviewer = review.get("reviewer")
+    if not isinstance(reviewer, str) or not reviewer.strip():
+        errors.append("semantic_review.reviewer 必须为非空复核标识")
+    reviewed_gates = review.get("reviewed_gates")
+    if not isinstance(reviewed_gates, list) or gate_id not in reviewed_gates:
+        errors.append(f"semantic_review.reviewed_gates 未覆盖 {gate_id}")
+    reviewed_at = review.get("reviewed_at")
+    if not isinstance(reviewed_at, str):
+        errors.append("semantic_review.reviewed_at 必须为 ISO-8601 字符串")
+    else:
+        try:
+            parsed = datetime.fromisoformat(reviewed_at.replace("Z", "+00:00"))
+            if parsed.tzinfo is None:
+                errors.append("semantic_review.reviewed_at 必须包含时区")
+        except ValueError:
+            errors.append("semantic_review.reviewed_at 不是有效 ISO-8601 时间")
+    if review.get("reviewer_type") == "llm_judge":
+        judge = review.get("judge")
+        if not isinstance(judge, dict):
+            errors.append("LLM Judge 复核必须包含 judge 配置")
+        else:
+            for field in ("provider", "model_id"):
+                value = judge.get(field)
+                if not isinstance(value, str) or not value.strip():
+                    errors.append(f"semantic_review.judge.{field} 必须为非空字符串")
+            prompt_sha256 = judge.get("prompt_sha256")
+            if not isinstance(prompt_sha256, str) or not re.fullmatch(
+                r"[a-f0-9]{64}", prompt_sha256
+            ):
+                errors.append(
+                    "semantic_review.judge.prompt_sha256 必须为 64 位小写十六进制"
+                )
+    return review, errors
+
+
 def _gate_h09(observed: dict[str, Any]) -> dict[str, Any]:
+    review, metadata_errors = _semantic_review_metadata_errors(observed, "H09")
+    if metadata_errors:
+        return _gate(
+            "H09",
+            None,
+            metadata_errors,
+            automation_status="manual_or_judge_required",
+        )
     value = (observed.get("claim_boundaries") or {}).get(
         "facts_hypotheses_missing_evidence_separated"
     )
@@ -893,8 +948,11 @@ def _gate_h09(observed: dict[str, Any]) -> dict[str, Any]:
     return _gate(
         "H09",
         bool(value),
-        [f"facts_hypotheses_missing_evidence_separated={value}"],
-        automation_status="structured_review_assertion",
+        [
+            f"facts_hypotheses_missing_evidence_separated={value}",
+            f"semantic_reviewer={review.get('reviewer')}",
+        ],
+        automation_status="semantic_review_record_validated",
     )
 
 
@@ -903,6 +961,14 @@ def _gate_h10(
     observed: dict[str, Any],
     tool_calls: list[dict[str, Any]],
 ) -> dict[str, Any]:
+    review, metadata_errors = _semantic_review_metadata_errors(observed, "H10")
+    if metadata_errors:
+        return _gate(
+            "H10",
+            None,
+            metadata_errors,
+            automation_status="manual_or_judge_required",
+        )
     status = observed.get("status_boundaries") or {}
     required_fields = ["status_boundary_preserved", "capability_boundary_preserved"]
     if tool_calls and any(call.get("tool_name") in BUSINESS_TOOLS for call in tool_calls):
@@ -918,8 +984,11 @@ def _gate_h10(
     return _gate(
         "H10",
         all(values.values()),
-        [f"status_boundaries={values}"],
-        automation_status="structured_review_assertion",
+        [
+            f"status_boundaries={values}",
+            f"semantic_reviewer={review.get('reviewer')}",
+        ],
+        automation_status="semantic_review_record_validated",
     )
 
 
@@ -979,14 +1048,15 @@ def _gate_h12(expected: dict[str, Any], observed: dict[str, Any]) -> dict[str, A
     if structural_errors:
         return _gate("H12", False, structural_errors)
 
-    review = observed.get("semantic_review")
-    if not isinstance(review, dict) or review.get("status") == "not_reviewed":
+    review, metadata_errors = _semantic_review_metadata_errors(observed, "H12")
+    if metadata_errors:
         return _gate(
             "H12",
             None,
             [
                 "must_include/must_not_include 需要人工或 Judge 语义复核；",
                 "关键词匹配未被用作最终语义判定。",
+                *metadata_errors,
             ],
             automation_status="structural_automated_semantic_review_required",
         )

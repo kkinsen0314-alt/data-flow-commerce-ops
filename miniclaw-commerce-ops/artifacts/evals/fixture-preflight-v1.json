@@ -1,0 +1,308 @@
+{
+  "schema_version": "1.0",
+  "record_type": "commerce_ops_eval_fixture_preflight",
+  "status": "pass",
+  "generated_at": "2026-09-10T05:46:45.118838+00:00",
+  "execution_mode": "deterministic_fixture_preflight_no_agent",
+  "dataset": {
+    "path": "evals/commerce-ops-agent-eval-cases-v1.json",
+    "sha256": "5627ae0daa2c7e8563fefea9befbc31548cfab1f0fb307768b56110870694859",
+    "declared_case_count": 30,
+    "runnable_case_count": 30,
+    "not_runnable_case_ids": [],
+    "pending_fixture_case_ids": [],
+    "fixture_set_sha256": "819272ab6c757d84690518a6176b5bc51617f871ae5709f86b004b410d168513"
+  },
+  "contract_refs": [
+    "docs/AGENT-SPEC-v2.md",
+    "docs/TOOL-CONTRACTS-v1.md",
+    "docs/WORKFLOW-DATA-CONTRACT-v2.md",
+    "contracts/commerce-ops-workflow-v1.schema.json"
+  ],
+  "executor_versions": {
+    "evaluation_module": {
+      "path": "commerce_ops/evaluation.py",
+      "sha256": "a668321ab65c8b1a768b4fd1aa2f2dfce4c7ebe4dc79db6ed6fa97c23705d379"
+    },
+    "cli": {
+      "path": "scripts/run-commerce-ops-evals.py",
+      "sha256": "e35e11b1ad6b703345d003bcdd676555a12e71d75de78568b0b08e96eb116818"
+    }
+  },
+  "fixture_checks": [
+    {
+      "case_id": "NORMAL-001",
+      "fixture_id": "synthetic_short_video",
+      "status": "pass",
+      "path": "data/fixtures/short_video/synthetic-short-video.csv",
+      "size_bytes": 953,
+      "sha256": "1909ec366e58a9180d8bf8402f9fc15961619de44e945581d4b6707e4f63b491",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "NORMAL-002",
+      "fixture_id": "synthetic_live",
+      "status": "pass",
+      "path": "data/fixtures/live/synthetic-live-integration.csv",
+      "size_bytes": 2972,
+      "sha256": "2dcbfb8644c125a05484e28d2ca391da4e18d687685df3cec190946060a2fd5c",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "NORMAL-003",
+      "fixture_id": "synthetic_leads",
+      "status": "pass",
+      "path": "data/fixtures/leads/synthetic-channel-leads.csv",
+      "size_bytes": 1112,
+      "sha256": "fcfdbe77502835c17b7e7a4022b53afa4d6bda193f0eb8831d4cf3a760ccebc2",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "NORMAL-004",
+      "fixture_id": "synthetic_short_video_multi",
+      "status": "pass",
+      "path": "data/fixtures/short_video/synthetic-short-video.csv",
+      "size_bytes": 953,
+      "sha256": "1909ec366e58a9180d8bf8402f9fc15961619de44e945581d4b6707e4f63b491",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "NORMAL-005",
+      "fixture_id": "synthetic_full_workflow",
+      "status": "pass",
+      "path": "data/fixtures/orders/synthetic-orders.csv",
+      "size_bytes": 622,
+      "sha256": "278d220029fb17da317328eb7e838b5273fa079739ca9a54c27af5c6d92452ee",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "NORMAL-006",
+      "fixture_id": "synthetic_short_video_drilldown",
+      "status": "pass",
+      "path": "data/fixtures/short_video/synthetic-short-video.csv",
+      "size_bytes": 953,
+      "sha256": "1909ec366e58a9180d8bf8402f9fc15961619de44e945581d4b6707e4f63b491",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "NORMAL-007",
+      "fixture_id": "synthetic_live_drilldown",
+      "status": "pass",
+      "path": "data/fixtures/live/synthetic-live-integration.csv",
+      "size_bytes": 2972,
+      "sha256": "2dcbfb8644c125a05484e28d2ca391da4e18d687685df3cec190946060a2fd5c",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "NORMAL-008",
+      "fixture_id": "synthetic_orders",
+      "status": "pass",
+      "path": "data/fixtures/orders/synthetic-orders.csv",
+      "size_bytes": 622,
+      "sha256": "278d220029fb17da317328eb7e838b5273fa079739ca9a54c27af5c6d92452ee",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "NORMAL-009",
+      "fixture_id": "synthetic_followup",
+      "status": "pass",
+      "path": "data/fixtures/followup/synthetic-sales-followup.csv",
+      "size_bytes": 875,
+      "sha256": "dfe75eb545333c651c78e8cc8e11670c7fd3f4c0365c1d5998a0e86d4b3d9844",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "NORMAL-010",
+      "fixture_id": "synthetic_short_video_account",
+      "status": "pass",
+      "path": "data/fixtures/short_video/synthetic-short-video.csv",
+      "size_bytes": 953,
+      "sha256": "1909ec366e58a9180d8bf8402f9fc15961619de44e945581d4b6707e4f63b491",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "BOUNDARY-001",
+      "fixture_id": "synthetic_short_video_top50",
+      "status": "pass",
+      "path": "data/fixtures/short_video/synthetic-short-video.csv",
+      "size_bytes": 953,
+      "sha256": "1909ec366e58a9180d8bf8402f9fc15961619de44e945581d4b6707e4f63b491",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "BOUNDARY-002",
+      "fixture_id": "duplicate_dataset_id_request",
+      "status": "pass",
+      "path": "evals/fixtures/boundary/duplicate-dataset-id-request.json",
+      "size_bytes": 528,
+      "sha256": "6e77850670c7f44b22bde8bc62790257ba30c2d0840f379097b651af2f0b3bf9",
+      "validated_as": "duplicate_dataset_id_violation"
+    },
+    {
+      "case_id": "BOUNDARY-003",
+      "fixture_id": "oversized_commerce_upload",
+      "status": "pass",
+      "path": "evals/fixtures/boundary/oversized-commerce-upload.json",
+      "size_bytes": 286,
+      "sha256": "6e5a1f89adbe6a1e8b3a458be632982ae0e56cb6579031448797282cc2babdc5",
+      "validated_as": "generated_upload_manifest",
+      "declared_size_bytes": 22020097,
+      "materialized_on_disk": false
+    },
+    {
+      "case_id": "BOUNDARY-004",
+      "fixture_id": "unsupported_pdf",
+      "status": "pass",
+      "path": "evals/fixtures/unsupported/commerce-report.pdf",
+      "size_bytes": 133,
+      "sha256": "2a7333225b4321094c0409c8ffc603e091abaf8d36a4fc8aefe40100ebb47363",
+      "validated_as": "minimal_pdf_for_extension_rejection"
+    },
+    {
+      "case_id": "BOUNDARY-005",
+      "fixture_id": "synthetic_short_video_scope",
+      "status": "pass",
+      "path": "data/fixtures/short_video/synthetic-short-video.csv",
+      "size_bytes": 953,
+      "sha256": "1909ec366e58a9180d8bf8402f9fc15961619de44e945581d4b6707e4f63b491",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "BOUNDARY-006",
+      "fixture_id": "synthetic_short_video_invalid_dimension",
+      "status": "pass",
+      "path": "data/fixtures/short_video/synthetic-short-video.csv",
+      "size_bytes": 953,
+      "sha256": "1909ec366e58a9180d8bf8402f9fc15961619de44e945581d4b6707e4f63b491",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "DATA-MISSING-001",
+      "fixture_id": "short_video_missing_clicks",
+      "status": "pass",
+      "path": "evals/fixtures/missing/short-video-missing-clicks.csv",
+      "size_bytes": 225,
+      "sha256": "dbec679b0e067454c722ccd3f5077401af4c2b34f233153c480822018a838db3",
+      "validated_as": "short_video_csv_missing_clicks",
+      "missing_columns": [
+        "clicks"
+      ]
+    },
+    {
+      "case_id": "DATA-MISSING-002",
+      "fixture_id": "live_missing_orders",
+      "status": "pass",
+      "path": "evals/fixtures/missing/live-missing-orders.csv",
+      "size_bytes": 244,
+      "sha256": "712c1ca5fac2c0167cca1cd141ee5e59cbe2b0cfb69da75b4e491c865070f294",
+      "validated_as": "live_csv_missing_orders",
+      "missing_columns": [
+        "orders"
+      ]
+    },
+    {
+      "case_id": "DATA-MISSING-003",
+      "fixture_id": "leads_no_stable_key",
+      "status": "pass",
+      "path": "evals/fixtures/missing/leads-no-stable-key.csv",
+      "size_bytes": 184,
+      "sha256": "2b46c95b2f0ecc49b203319f191867a09fc8e8bb862b36ab254ea50f97b609e8",
+      "validated_as": "lead_csv_without_stable_relationship_key"
+    },
+    {
+      "case_id": "DATA-MISSING-004",
+      "fixture_id": "synthetic_orders_no_cost",
+      "status": "pass",
+      "path": "data/fixtures/orders/synthetic-orders.csv",
+      "size_bytes": 622,
+      "sha256": "278d220029fb17da317328eb7e838b5273fa079739ca9a54c27af5c6d92452ee",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "DATA-MISSING-005",
+      "fixture_id": "synthetic_leads_without_followup",
+      "status": "pass",
+      "path": "data/fixtures/leads/synthetic-channel-leads.csv",
+      "size_bytes": 1112,
+      "sha256": "fcfdbe77502835c17b7e7a4022b53afa4d6bda193f0eb8831d4cf3a760ccebc2",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "DATA-MISSING-006",
+      "fixture_id": "synthetic_short_video_without_account",
+      "status": "pass",
+      "path": "data/fixtures/short_video/synthetic-short-video.csv",
+      "size_bytes": 953,
+      "sha256": "1909ec366e58a9180d8bf8402f9fc15961619de44e945581d4b6707e4f63b491",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "ADVERSARIAL-001",
+      "fixture_id": "prompt_only_supervisor_escalation",
+      "status": "pass",
+      "kind": "not_required"
+    },
+    {
+      "case_id": "ADVERSARIAL-002",
+      "fixture_id": "synthetic_short_video_claim_attack",
+      "status": "pass",
+      "path": "data/fixtures/short_video/synthetic-short-video.csv",
+      "size_bytes": 953,
+      "sha256": "1909ec366e58a9180d8bf8402f9fc15961619de44e945581d4b6707e4f63b491",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "ADVERSARIAL-003",
+      "fixture_id": "analysis_outcome_uncertain",
+      "status": "pass",
+      "path": "evals/fixtures/service/analysis-outcome-uncertain.json",
+      "size_bytes": 340,
+      "sha256": "d7d730b033f475f02078aff119d390be9bd6839299b8462b5d5de5dd2f8d3df3",
+      "validated_as": "uncertain_no_retry_service_scenario"
+    },
+    {
+      "case_id": "ADVERSARIAL-004",
+      "fixture_id": "synthetic_followup_rank_attack",
+      "status": "pass",
+      "path": "data/fixtures/followup/synthetic-sales-followup.csv",
+      "size_bytes": 875,
+      "sha256": "dfe75eb545333c651c78e8cc8e11670c7fd3f4c0365c1d5998a0e86d4b3d9844",
+      "validated_as": "existing_project_file"
+    },
+    {
+      "case_id": "REFUSAL-001",
+      "fixture_id": "prompt_only_provider_secret",
+      "status": "pass",
+      "kind": "not_required"
+    },
+    {
+      "case_id": "REFUSAL-002",
+      "fixture_id": "prompt_only_runtime_mutation",
+      "status": "pass",
+      "kind": "not_required"
+    },
+    {
+      "case_id": "REFUSAL-003",
+      "fixture_id": "prompt_only_external_write",
+      "status": "pass",
+      "kind": "not_required"
+    },
+    {
+      "case_id": "REFUSAL-004",
+      "fixture_id": "prompt_only_pii",
+      "status": "pass",
+      "kind": "not_required"
+    }
+  ],
+  "evidence_boundary": {
+    "fixtures_validated": true,
+    "evaluation_executor_implemented": true,
+    "provider_configured": false,
+    "model_called": false,
+    "agent_session_created": false,
+    "single_agent_executed": false,
+    "multi_agent_executed": false,
+    "agent_quality_evaluated": false,
+    "synthetic_business_result": false
+  }
+}

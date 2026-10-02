@@ -1,14 +1,20 @@
-"""FastAPI surface for the deterministic commerce operations tool layer."""
+"""FastAPI surface for deterministic tools and MiniClaw native runs."""
 
+from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, RedirectResponse, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import ValidationError
 
 from .datasets import MAX_INPUT_BYTES
+from .conversation_api import create_conversation_router
+from .conversation_service import ConversationService
+from .conversation_store import ConversationStore
 from .demo_models import (
     DemoRunRequest,
     DemoRunResult,
@@ -23,6 +29,11 @@ from .demo_orchestrator import (
     DemoOrchestrator,
     DemoRunNotFound,
 )
+from .native_api import create_native_router
+from .native_runtime import NativeRuntime, default_native_runtime
+from .operations_auth import OperationsAuth
+from .operations_api import create_operations_router
+from .visualization_api import create_visualization_router
 from .service import CommerceOpsService, default_service
 from .tool_models import (
     AnalysisToolResult,
@@ -39,6 +50,7 @@ from .tool_models import (
 
 
 WEB_ROOT = Path(__file__).resolve().parents[1] / "web"
+NATIVE_WEB_ROOT = Path(__file__).resolve().parents[1] / "native_web"
 
 
 def _get_service(request: Request) -> CommerceOpsService:
@@ -61,17 +73,60 @@ DemoOrchestratorDep = Annotated[
 def create_app(
     service: CommerceOpsService | None = None,
     demo_orchestrator: DemoOrchestrator | None = None,
+    native_runtime: NativeRuntime | None = None,
+    operations_auth: OperationsAuth | None = None,
+    conversation_store: ConversationStore | None = None,
+    conversation_service: ConversationService | None = None,
 ) -> FastAPI:
     commerce_service = service or default_service()
+    miniclaw_runtime = native_runtime or default_native_runtime()
+
+    @asynccontextmanager
+    async def lifespan(_: FastAPI):
+        yield
+        await miniclaw_runtime.aclose()
+
     application = FastAPI(
         title="MiniClaw 电商运营确定性工具层",
-        version="0.3.0",
+        version="0.4.0",
         description=(
-            "使用 synthetic 数据验证五个只读经营分析工具，"
-            "并提供不调用 Provider 的本地功能演示 API。"
+            "提供五个只读经营分析工具，以及服务端驱动的 MiniClaw "
+            "原生 Agent 运行接口。"
         ),
+        lifespan=lifespan,
     )
     application.state.commerce_ops_service = commerce_service
+    application.state.native_runtime = miniclaw_runtime
+    application.state.operations_auth = operations_auth or OperationsAuth(
+        miniclaw_runtime.configuration.base_url
+    )
+    runtime_client = getattr(miniclaw_runtime, "client", None)
+    application.state.conversation_service = conversation_service
+    if application.state.conversation_service is None and runtime_client is not None:
+        application.state.conversation_service = ConversationService(
+            runtime_client,
+            conversation_store
+            or ConversationStore(
+                miniclaw_runtime.project_root / "runtime" / "data" / "conversations"
+            ),
+        )
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=[application.state.operations_auth.base_url],
+        allow_credentials=True,
+        allow_methods=["GET", "POST"],
+        allow_headers=["Content-Type"],
+    )
+
+    @application.middleware("http")
+    async def protect_browser_surface(request: Request, call_next):
+        is_browser = "origin" in request.headers or "sec-fetch-site" in request.headers
+        if is_browser and request.url.path.startswith("/v1/") and not request.url.path.startswith("/v1/operations/"):
+            return JSONResponse({"detail": "浏览器请使用已认证的运营接口。"}, status_code=403)
+        response = await call_next(request)
+        if request.url.path.startswith("/v1/operations/"):
+            response.headers["Cache-Control"] = "no-store"
+        return response
     application.state.demo_orchestrator = demo_orchestrator or DemoOrchestrator(
         commerce_service.store.data_root
     )
@@ -81,10 +136,21 @@ def create_app(
         StaticFiles(directory=WEB_ROOT),
         name="demo-assets",
     )
+    application.mount(
+        "/native/assets",
+        StaticFiles(directory=NATIVE_WEB_ROOT),
+        name="native-assets",
+    )
 
     @application.get("/", include_in_schema=False)
-    def redirect_to_demo() -> RedirectResponse:
-        return RedirectResponse(url="/demo", status_code=307)
+    def redirect_to_native_console() -> RedirectResponse:
+        return RedirectResponse(url="/native", status_code=307)
+
+    @application.get("/native", include_in_schema=False)
+    def native_page() -> RedirectResponse:
+        return RedirectResponse(
+            url=f"{application.state.operations_auth.base_url}/operations", status_code=307
+        )
 
     @application.get("/demo", include_in_schema=False)
     def demo_page() -> FileResponse:
@@ -228,6 +294,10 @@ def create_app(
 
     application.include_router(router)
     application.include_router(demo_router)
+    application.include_router(create_native_router())
+    application.include_router(create_operations_router())
+    application.include_router(create_conversation_router())
+    application.include_router(create_visualization_router())
     return application
 
 

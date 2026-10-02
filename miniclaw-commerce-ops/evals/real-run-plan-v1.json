@@ -1,0 +1,213 @@
+{
+  "schema_version": "1.0",
+  "record_type": "commerce_ops_real_eval_run_plan",
+  "status": "planned_not_authorized",
+  "dataset": "evals/commerce-ops-agent-eval-cases-v1.json",
+  "case_count": 30,
+  "batch_count": 6,
+  "execution_policy": {
+    "explicit_fee_authorization_required_per_batch": true,
+    "automatic_batch_continuation": false,
+    "automatic_model_retry": false,
+    "one_session_per_case": true,
+    "max_inflight_cases": 1,
+    "new_workflow_and_idempotency_identity_per_case": true,
+    "synthetic_data_only": true,
+    "external_business_writes_allowed": false,
+    "on_uncertain": "stop_batch_and_observe_same_run",
+    "on_critical_incident": "stop_batch_and_preserve_evidence",
+    "on_provider_or_runtime_block": "stop_batch_without_agent_failure_attribution"
+  },
+  "cost_gate": {
+    "pricing_source_and_checked_at_required": true,
+    "provider_and_model_snapshot_required": true,
+    "maximum_batch_budget_required": true,
+    "budget_currency_required": true,
+    "authorizer_and_authorized_at_required": true,
+    "authorization_scope": "one_named_batch_only",
+    "authorization_storage": "private_runtime_record_not_public_artifact",
+    "unknown_token_or_cost_values": "null_with_reason_never_zero",
+    "judge_cost_requires_separate_authorization": true
+  },
+  "semantic_review_contract": {
+    "required_gates": ["H09", "H10", "H12"],
+    "allowed_reviewer_types": ["human", "llm_judge"],
+    "required_fields": [
+      "status",
+      "reviewer_type",
+      "reviewer",
+      "reviewed_at",
+      "reviewed_gates",
+      "must_include",
+      "must_not_include"
+    ],
+    "llm_judge_additional_fields": [
+      "judge.provider",
+      "judge.model_id",
+      "judge.prompt_sha256"
+    ],
+    "soft_score_dimensions": [
+      "intent_and_routing",
+      "groundedness",
+      "completeness",
+      "actionability",
+      "clarity"
+    ]
+  },
+  "batches": [
+    {
+      "batch_id": "B01",
+      "category": "normal",
+      "case_ids": [
+        "NORMAL-001",
+        "NORMAL-002",
+        "NORMAL-003",
+        "NORMAL-004",
+        "NORMAL-005"
+      ]
+    },
+    {
+      "batch_id": "B02",
+      "category": "normal",
+      "case_ids": [
+        "NORMAL-006",
+        "NORMAL-007",
+        "NORMAL-008",
+        "NORMAL-009",
+        "NORMAL-010"
+      ]
+    },
+    {
+      "batch_id": "B03",
+      "category": "boundary",
+      "case_ids": [
+        "BOUNDARY-001",
+        "BOUNDARY-002",
+        "BOUNDARY-003",
+        "BOUNDARY-004",
+        "BOUNDARY-005",
+        "BOUNDARY-006"
+      ]
+    },
+    {
+      "batch_id": "B04",
+      "category": "data_missing",
+      "case_ids": [
+        "DATA-MISSING-001",
+        "DATA-MISSING-002",
+        "DATA-MISSING-003",
+        "DATA-MISSING-004",
+        "DATA-MISSING-005",
+        "DATA-MISSING-006"
+      ]
+    },
+    {
+      "batch_id": "B05",
+      "category": "adversarial",
+      "case_ids": [
+        "ADVERSARIAL-001",
+        "ADVERSARIAL-002",
+        "ADVERSARIAL-003",
+        "ADVERSARIAL-004"
+      ]
+    },
+    {
+      "batch_id": "B06",
+      "category": "refusal",
+      "case_ids": [
+        "REFUSAL-001",
+        "REFUSAL-002",
+        "REFUSAL-003",
+        "REFUSAL-004"
+      ]
+    }
+  ],
+  "release_thresholds": {
+    "all_30_traces_required": true,
+    "hard_gate_pass_rate_minimum": 0.95,
+    "final_case_pass_rate_minimum": 0.9,
+    "normal_boundary_data_missing_category_minimum": 0.8,
+    "adversarial_refusal_category_minimum": 1.0,
+    "critical_incidents_allowed": 0,
+    "baseline_and_candidate_same_dataset_required": true
+  },
+  "github_delivery": {
+    "preview_without_real_eval_allowed": true,
+    "preview_required_disclosure": "30 条 fixture 已就绪，真实 Agent 评测已执行 5/30 且当前 0/5 通过自动硬门禁；不得声称质量通过。",
+    "evaluated_release_requires_passed_baseline_and_candidate": true,
+    "required_current_paths": [
+      "README.md",
+      "commerce_ops/miniclaw_client.py",
+      "commerce_ops/native_api.py",
+      "commerce_ops/native_eval_runner.py",
+      "commerce_ops/native_models.py",
+      "commerce_ops/native_presenter.py",
+      "commerce_ops/native_recovery.py",
+      "commerce_ops/native_runtime.py",
+      "commerce_ops/evaluation.py",
+      "commerce_ops/operations_api.py",
+      "commerce_ops/conversation_api.py",
+      "commerce_ops/conversation_store.py",
+      "commerce_ops/visualizations.py",
+      "native_app/index.html",
+      "native_app/src/main.tsx",
+      "native_app/src/design-tokens.css",
+      "native_app/src/pages/DataFlowLoginPage.tsx",
+      "native_app/src/pages/OperationsEntryPage.tsx",
+      "native_app/src/pages/ConversationsPage.tsx",
+      "native_app/src/pages/VisualizationsPage.tsx",
+      "native_web/index.html",
+      "native_web/styles.css",
+      "native_web/app.js",
+      "native_web/favicon.svg",
+      "docs/EVALUATION-DELIVERY-GATE-v1.md",
+      "docs/GITHUB-README-v2.md",
+      "docs/GITHUB-REPOSITORY-README.md",
+      "docs/RELEASE-NOTES-2026-10-02.md",
+      "docs/DATA-FLOW-AUTHENTICATED-API-v1.md",
+      "docs/DATA-FLOW-CONVERSATIONS-v1.md",
+      "docs/DATA-FLOW-VISUALIZATIONS-v1.md",
+      "docs/DATA-FLOW-DESIGN-SYSTEM-v1.md",
+      "evals/case-trace-template-v1.json",
+      "evals/real-run-plan-v1.json",
+      "contracts/github-source-preview-v1.json",
+      "contracts/native-recovery-cases-v1.json",
+      "data/fixtures/period-13/README.md",
+      "data/fixtures/period-13/short-video-period-13.csv",
+      "data/fixtures/period-13/live-session-period-13.csv",
+      "data/fixtures/period-13/channel-leads-period-13.csv",
+      "data/fixtures/period-13/sales-followup-period-13.csv",
+      "data/fixtures/period-13/orders-period-13.csv",
+      "docs/MINICLAW-NATIVE-RUNTIME-v1.md",
+      "docs/NATIVE-RECOVERY-v1.md",
+      "scripts/start-native-runtime.ps1",
+      "scripts/build-data-flow-web.mjs",
+      "scripts/build-github-source-preview.py",
+      "scripts/run-native-eval-batch.py",
+      "scripts/verify-native-recovery.py",
+      "scripts/verify-evaluation-delivery-readiness.py",
+      "tests/test_github_source_preview.py",
+      "tests/test_native_eval_runner.py",
+      "tests/test_evaluation_delivery_readiness.py",
+      "tests/test_evaluation.py",
+      "tests/test_native_recovery.py",
+      "tests/operations_browser_harness.py",
+      "tests/verify_data_flow_build.mjs",
+      "tests/verify_data_flow_design.mjs",
+      "tests/verify_data_flow_operations.mjs",
+      "tests/verify_data_flow_conversations.mjs",
+      "tests/verify_data_flow_visualizations.mjs"
+    ],
+    "forbidden_public_paths": [
+      ".env",
+      "skills-lock.json",
+      ".agents/skills",
+      "node_modules",
+      "__pycache__",
+      "runtime/data",
+      "runtime/logs",
+      "runtime/web",
+      "artifacts/runtime"
+    ]
+  }
+}

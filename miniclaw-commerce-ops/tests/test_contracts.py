@@ -63,6 +63,39 @@ class ContractValidationTests(unittest.TestCase):
         ):
             self.validate_mutation(mutate)
 
+    def test_strategy_cannot_reference_missing_finding(self):
+        def mutate(sample):
+            sample["decision_packet"]["actions"][0]["finding_ids"] = [
+                "finding_missing"
+            ]
+
+        with self.assertRaisesRegex(
+            ContractValidationError, "不存在的 finding"
+        ):
+            self.validate_mutation(mutate)
+
+    def test_strategy_cannot_reference_missing_action_evidence(self):
+        def mutate(sample):
+            sample["decision_packet"]["actions"][0]["evidence_ids"] = [
+                "ev_missing"
+            ]
+
+        with self.assertRaisesRegex(
+            ContractValidationError, "不存在的 evidence"
+        ):
+            self.validate_mutation(mutate)
+
+    def test_strategy_verification_cannot_reference_missing_dataset(self):
+        def mutate(sample):
+            sample["decision_packet"]["actions"][0][
+                "verification_metric"
+            ]["dataset_ids"] = ["ds_missing"]
+
+        with self.assertRaisesRegex(
+            ContractValidationError, "不存在的 dataset"
+        ):
+            self.validate_mutation(mutate)
+
     def test_strategy_cannot_use_blocked_analysis(self):
         def mutate(sample):
             packet = sample["analysis_packets"][2]

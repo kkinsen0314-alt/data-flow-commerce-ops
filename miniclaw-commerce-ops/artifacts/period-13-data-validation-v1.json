@@ -1,0 +1,496 @@
+{
+  "schema_version": "1.0",
+  "artifact_type": "period_13_synthetic_data_validation",
+  "status": "pass",
+  "synthetic": true,
+  "period": {
+    "label": "第13期",
+    "start": "2026-08-31 09:00:00",
+    "end": "2026-09-06 22:30:00"
+  },
+  "execution_guards": {
+    "host_started": false,
+    "api_request_sent": false,
+    "model_called": false,
+    "native_run_created": false
+  },
+  "row_counts": {
+    "short_video": 18,
+    "live_session": 24,
+    "channel_lead": 18,
+    "sales_followup": 17,
+    "order": 12
+  },
+  "business_metrics": {
+    "paid_order_count": 9,
+    "paid_gmv": "10591",
+    "order_lead_coverage": 0.6666666666666666,
+    "paid_lead_conversion": 0.5,
+    "followup_within_24h": {
+      "numerator": 13,
+      "denominator": 18,
+      "ratio": 0.7222222222222222
+    },
+    "intentional_missing_followup_lead_ids": [
+      "p13_lead_017"
+    ]
+  },
+  "production_manifests": {
+    "short_video": {
+      "quality_status": "pass",
+      "row_count": 18,
+      "warnings": [],
+      "missing_required_fields": []
+    },
+    "live_session": {
+      "quality_status": "pass",
+      "row_count": 24,
+      "warnings": [],
+      "missing_required_fields": []
+    },
+    "channel_lead": {
+      "quality_status": "pass",
+      "row_count": 18,
+      "warnings": [],
+      "missing_required_fields": []
+    },
+    "sales_followup": {
+      "quality_status": "pass",
+      "row_count": 17,
+      "warnings": [],
+      "missing_required_fields": []
+    },
+    "order": {
+      "quality_status": "pass",
+      "row_count": 12,
+      "warnings": [],
+      "missing_required_fields": []
+    }
+  },
+  "native_normalized_datasets": [
+    {
+      "dataset_id": "ds_pending",
+      "dataset_type": "short_video",
+      "file_path": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\short-video-period-13.csv",
+      "synthetic": true
+    },
+    {
+      "dataset_id": "ds_pending",
+      "dataset_type": "live_session",
+      "file_path": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\live-session-period-13.csv",
+      "synthetic": true
+    },
+    {
+      "dataset_id": "ds_pending",
+      "dataset_type": "channel_lead",
+      "file_path": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\channel-leads-period-13.csv",
+      "synthetic": true
+    },
+    {
+      "dataset_id": "ds_pending",
+      "dataset_type": "sales_followup",
+      "file_path": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\sales-followup-period-13.csv",
+      "synthetic": true
+    },
+    {
+      "dataset_id": "ds_pending",
+      "dataset_type": "order",
+      "file_path": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\orders-period-13.csv",
+      "synthetic": true
+    }
+  ],
+  "checks_total": 51,
+  "checks_passed": 51,
+  "checks_failed": 0,
+  "checks": [
+    {
+      "name": "short_video.file_exists",
+      "status": "pass",
+      "details": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\short-video-period-13.csv"
+    },
+    {
+      "name": "short_video.headers",
+      "status": "pass",
+      "details": [
+        "content_id_hash",
+        "account_id_hash",
+        "click_id_hash",
+        "published_at",
+        "impressions",
+        "plays",
+        "completions",
+        "interactions",
+        "clicks"
+      ]
+    },
+    {
+      "name": "short_video.row_count",
+      "status": "pass",
+      "details": 18
+    },
+    {
+      "name": "short_video.no_duplicate_rows",
+      "status": "pass",
+      "details": 0
+    },
+    {
+      "name": "live_session.file_exists",
+      "status": "pass",
+      "details": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\live-session-period-13.csv"
+    },
+    {
+      "name": "live_session.headers",
+      "status": "pass",
+      "details": [
+        "用户ID",
+        "直播场次",
+        "直播标题",
+        "是否到课",
+        "是否完课",
+        "是否访问课程商品",
+        "是否领取优惠券",
+        "是否发起支付",
+        "是否购买课程",
+        "是否观看回放",
+        "直播观看时长",
+        "邀请人",
+        "线索渠道",
+        "是否新用户",
+        "预约时间"
+      ]
+    },
+    {
+      "name": "live_session.row_count",
+      "status": "pass",
+      "details": 24
+    },
+    {
+      "name": "live_session.no_duplicate_rows",
+      "status": "pass",
+      "details": 0
+    },
+    {
+      "name": "channel_lead.file_exists",
+      "status": "pass",
+      "details": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\channel-leads-period-13.csv"
+    },
+    {
+      "name": "channel_lead.headers",
+      "status": "pass",
+      "details": [
+        "lead_id_hash",
+        "click_id_hash",
+        "sales_owner_id_hash",
+        "channel",
+        "lead_source",
+        "created_at",
+        "lead_stage"
+      ]
+    },
+    {
+      "name": "channel_lead.row_count",
+      "status": "pass",
+      "details": 18
+    },
+    {
+      "name": "channel_lead.no_duplicate_rows",
+      "status": "pass",
+      "details": 0
+    },
+    {
+      "name": "sales_followup.file_exists",
+      "status": "pass",
+      "details": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\sales-followup-period-13.csv"
+    },
+    {
+      "name": "sales_followup.headers",
+      "status": "pass",
+      "details": [
+        "lead_id_hash",
+        "sales_owner_id_hash",
+        "assigned_at",
+        "first_followup_at",
+        "followup_count",
+        "followup_status"
+      ]
+    },
+    {
+      "name": "sales_followup.row_count",
+      "status": "pass",
+      "details": 17
+    },
+    {
+      "name": "sales_followup.no_duplicate_rows",
+      "status": "pass",
+      "details": 0
+    },
+    {
+      "name": "order.file_exists",
+      "status": "pass",
+      "details": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\orders-period-13.csv"
+    },
+    {
+      "name": "order.headers",
+      "status": "pass",
+      "details": [
+        "order_id_hash",
+        "lead_id_hash",
+        "ordered_at",
+        "paid_at",
+        "paid_amount",
+        "order_status"
+      ]
+    },
+    {
+      "name": "order.row_count",
+      "status": "pass",
+      "details": 12
+    },
+    {
+      "name": "order.no_duplicate_rows",
+      "status": "pass",
+      "details": 0
+    },
+    {
+      "name": "short_video.unique_primary_ids",
+      "status": "pass",
+      "details": 18
+    },
+    {
+      "name": "orders.unique_primary_ids",
+      "status": "pass",
+      "details": 12
+    },
+    {
+      "name": "click_join.exact_coverage",
+      "status": "pass",
+      "details": 18
+    },
+    {
+      "name": "live_to_lead.full_coverage",
+      "status": "pass",
+      "details": 18
+    },
+    {
+      "name": "followup_to_lead.valid_subset",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "order_to_lead.valid_subset",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "followup.intentional_gap",
+      "status": "pass",
+      "details": [
+        "p13_lead_017"
+      ]
+    },
+    {
+      "name": "followup.owner_consistency",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "short_video.funnel_monotonic",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "live.boolean_values",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "live.sessions",
+      "status": "pass",
+      "details": [
+        "1301",
+        "1302"
+      ]
+    },
+    {
+      "name": "live.period_title",
+      "status": "pass",
+      "details": [
+        "第13期课程·开营诊断",
+        "第13期课程·转化答疑"
+      ]
+    },
+    {
+      "name": "live.duration_format",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "timestamps.parseable",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "timestamps.period_window",
+      "status": "pass",
+      "details": {
+        "min": "2026-08-31 09:00:00",
+        "max": "2026-09-06 22:30:00"
+      }
+    },
+    {
+      "name": "followup.time_sequence",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "followup.within_24h",
+      "status": "pass",
+      "details": {
+        "numerator": 13,
+        "denominator": 18,
+        "ratio": 0.7222222222222222
+      }
+    },
+    {
+      "name": "orders.time_sequence",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "orders.paid_at_consistency",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "metrics.paid_order_count",
+      "status": "pass",
+      "details": 9
+    },
+    {
+      "name": "metrics.paid_gmv",
+      "status": "pass",
+      "details": "10591"
+    },
+    {
+      "name": "metrics.order_lead_coverage",
+      "status": "pass",
+      "details": 0.6666666666666666
+    },
+    {
+      "name": "metrics.paid_lead_conversion",
+      "status": "pass",
+      "details": 0.5
+    },
+    {
+      "name": "privacy.no_phone_or_email",
+      "status": "pass",
+      "details": {
+        "mobile": [],
+        "email": []
+      }
+    },
+    {
+      "name": "privacy.synthetic_id_namespace",
+      "status": "pass",
+      "details": 190
+    },
+    {
+      "name": "workbook.file_exists",
+      "status": "pass",
+      "details": "D:\\Workspace\\project017-miniclaw-commerce-ops\\outputs\\period-13-data\\period-13-commerce-data.xlsx"
+    },
+    {
+      "name": "workbook.sheet_set",
+      "status": "pass",
+      "details": [
+        "短视频",
+        "直播",
+        "渠道线索",
+        "销售跟进",
+        "订单"
+      ]
+    },
+    {
+      "name": "workbook.csv_exact_parity",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "workbook.no_formulas",
+      "status": "pass",
+      "details": []
+    },
+    {
+      "name": "production_loader.all_manifests_pass",
+      "status": "pass",
+      "details": {
+        "short_video": {
+          "quality_status": "pass",
+          "row_count": 18,
+          "warnings": [],
+          "missing_required_fields": []
+        },
+        "live_session": {
+          "quality_status": "pass",
+          "row_count": 24,
+          "warnings": [],
+          "missing_required_fields": []
+        },
+        "channel_lead": {
+          "quality_status": "pass",
+          "row_count": 18,
+          "warnings": [],
+          "missing_required_fields": []
+        },
+        "sales_followup": {
+          "quality_status": "pass",
+          "row_count": 17,
+          "warnings": [],
+          "missing_required_fields": []
+        },
+        "order": {
+          "quality_status": "pass",
+          "row_count": 12,
+          "warnings": [],
+          "missing_required_fields": []
+        }
+      }
+    },
+    {
+      "name": "native_preflight.paths_and_domains",
+      "status": "pass",
+      "details": [
+        {
+          "dataset_id": "ds_pending",
+          "dataset_type": "short_video",
+          "file_path": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\short-video-period-13.csv",
+          "synthetic": true
+        },
+        {
+          "dataset_id": "ds_pending",
+          "dataset_type": "live_session",
+          "file_path": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\live-session-period-13.csv",
+          "synthetic": true
+        },
+        {
+          "dataset_id": "ds_pending",
+          "dataset_type": "channel_lead",
+          "file_path": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\channel-leads-period-13.csv",
+          "synthetic": true
+        },
+        {
+          "dataset_id": "ds_pending",
+          "dataset_type": "sales_followup",
+          "file_path": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\sales-followup-period-13.csv",
+          "synthetic": true
+        },
+        {
+          "dataset_id": "ds_pending",
+          "dataset_type": "order",
+          "file_path": "D:\\Workspace\\project017-miniclaw-commerce-ops\\data\\fixtures\\period-13\\orders-period-13.csv",
+          "synthetic": true
+        }
+      ]
+    }
+  ]
+}

@@ -71,7 +71,7 @@ class DemoApiTests(unittest.IsolatedAsyncioTestCase):
     async def test_demo_page_and_assets_are_served_by_the_same_app(self):
         root = await self.request("GET", "/")
         self.assertEqual(root.status_code, 307)
-        self.assertEqual(root.headers["location"], "/demo")
+        self.assertEqual(root.headers["location"], "/native")
 
         page = await self.request("GET", "/demo")
         self.assertEqual(page.status_code, 200)

@@ -74,7 +74,11 @@
     "recovery_fields": [],
     "semantic_review": {
       "status": "not_reviewed",
+      "reviewer_type": null,
       "reviewer": null,
+      "reviewed_at": null,
+      "reviewed_gates": [],
+      "judge": null,
       "must_include": {},
       "must_not_include": {},
       "notes": null
@@ -100,4 +104,3 @@
     "未执行真实模型时 token、成本和端到端延迟必须为 null 并说明原因。"
   ]
 }
-

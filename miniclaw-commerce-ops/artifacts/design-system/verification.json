@@ -1,0 +1,13 @@
+{
+  "passed": true,
+  "checks": [
+    "one_business_navigation_without_numbered_rail",
+    "nested_result_highlights_tasks_only",
+    "existing_routes_and_connector_guide_keyboard_close",
+    "conversation_fee_gate_and_escape_preserve_draft",
+    "native_settings_theme_shared_by_business_pages",
+    "tablet_and_phone_single_navigation_focus_and_visible_composer",
+    "short_viewport_with_context_keeps_composer_visible"
+  ],
+  "real_model_calls": 0
+}

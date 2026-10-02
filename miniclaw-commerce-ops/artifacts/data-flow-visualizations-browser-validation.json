@@ -1,0 +1,19 @@
+{
+  "status": "pass",
+  "checked_at": "2026-10-02T04:43:53.068Z",
+  "checks": [
+    "authenticated_navigation_six_charts_and_five_verified_kpis",
+    "real_png_download_with_source_and_scope",
+    "channel_filter_drilldown_and_filtered_csv_download",
+    "inclusive_cohort_dates_preserve_later_payments",
+    "content_session_intersection_and_zero_denominator",
+    "live_detail_pagination_20_plus_4",
+    "390px_mobile_layout_without_horizontal_overflow",
+    "permission_failure_hides_data_recovery_and_session_expiration"
+  ],
+  "real_model_calls": 0,
+  "simulated_submissions": 0,
+  "authentication": "isolated MiniClaw identity fixture",
+  "data": "project017 period-13 synthetic CSV",
+  "api": "production visualization endpoints"
+}

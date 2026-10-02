@@ -1,0 +1,22 @@
+{
+  "status": "pass",
+  "generated_at": "2026-10-02T04:34:34.356Z",
+  "checks": [
+    "native_login_cookie_and_empty_server_history",
+    "backend_source_counts_and_seven_connector_types",
+    "fee_gate_submission_processing_polling_result_and_reload",
+    "strategy_selection_preserved_by_server",
+    "lost_confirmation_recovery_after_reload_without_resubmit",
+    "mobile_sources_without_horizontal_overflow",
+    "workspace_denial_and_manual_recovery",
+    "uncertain_submission_key_retained_after_response_and_recovery",
+    "expired_session_clears_authenticated_view"
+  ],
+  "backend": "real project017 FastAPI operations endpoints and temporary NativeRunStore",
+  "mocked": [
+    "MiniClaw identity provider",
+    "model and agent completion responses"
+  ],
+  "real_model_calls": 0,
+  "simulated_submissions": 4
+}

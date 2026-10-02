@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Data Flow</title>
+  <rect width="64" height="64" rx="16" fill="#142321"/>
+  <path d="M17 18h13c10 0 17 5.7 17 14s-7 14-17 14H17V18Zm11.8 20.7c5.2 0 8.3-2.4 8.3-6.7s-3.1-6.7-8.3-6.7h-2.4v13.4h2.4Z" fill="#8BE1D5"/>
+  <circle cx="48" cy="18" r="4" fill="#24AD9C"/>
+</svg>

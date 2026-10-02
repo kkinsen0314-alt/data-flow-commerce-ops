@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Data Flow 电商运营分析工作台" />
+    <title>Data Flow · 运营分析工作台</title>
+    <link rel="icon" href="/native/assets/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/native/assets/styles.css" />
+    <script src="/native/assets/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">跳到主要内容</a>
+
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="/native" aria-label="Data Flow 运营分析工作台首页">
+          <span class="brand-mark" aria-hidden="true">DF</span>
+          <span>
+            <strong>Data Flow</strong>
+            <small>电商运营分析</small>
+          </span>
+        </a>
+
+        <nav class="primary-nav" aria-label="主要导航">
+          <a class="nav-item is-active" href="#overview" aria-current="page">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h6V4H4v9Zm0 7h6v-5H4v5Zm10 0h6v-9h-6v9Zm0-16v5h6V4h-6Z"/></svg>
+            <span>工作台</span>
+          </a>
+          <a class="nav-item" href="#new-analysis">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 5h2v14h-2zM5 11h14v2H5z"/></svg>
+            <span>新建分析</span>
+          </a>
+          <a class="nav-item" href="#task-activity">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 3h14v18H5V3Zm2 4v2h10V7H7Zm0 4v2h10v-2H7Zm0 4v2h7v-2H7Z"/></svg>
+            <span>任务记录</span>
+          </a>
+          <a class="nav-item" href="#data-sources">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c4.4 0 8 1.3 8 3s-3.6 3-8 3-8-1.3-8-3 3.6-3 8-3Zm-8 7.2c1.8 1.2 4.8 1.8 8 1.8s6.2-.6 8-1.8V14c0 1.7-3.6 3-8 3s-8-1.3-8-3v-3.8Zm0 8V17c1.8 1.2 4.8 1.8 8 1.8s6.2-.6 8-1.8v1.2c0 1.7-3.6 3-8 3s-8-1.3-8-3Z"/></svg>
+            <span>数据源</span>
+          </a>
+          <a class="nav-item" href="#runtime-status">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m19.4 13 .1-1-.1-1 2.1-1.6-2-3.4-2.6 1a8 8 0 0 0-1.7-1L14.8 3h-4l-.4 2.8c-.6.3-1.2.6-1.7 1l-2.6-1-2 3.4L6.2 11l-.1 1 .1 1-2.1 1.6 2 3.4 2.6-1c.5.4 1.1.7 1.7 1l.4 2.8h4l.4-2.8c.6-.3 1.2-.6 1.7-1l2.6 1 2-3.4L19.4 13ZM12.8 15.8a3.8 3.8 0 1 1 0-7.6 3.8 3.8 0 0 1 0 7.6Z"/></svg>
+            <span>运行环境</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-footer">
+          <span class="connection-dot" data-sidebar-dot></span>
+          <div>
+            <strong data-sidebar-state>正在检查服务</strong>
+            <small>仅限本机访问</small>
+          </div>
+        </div>
+      </aside>
+
+      <div class="workspace">
+        <header class="topbar">
+          <div>
+            <span class="topbar-context">运营中心</span>
+            <strong>分析工作台</strong>
+          </div>
+          <div class="topbar-actions">
+            <span class="runtime-chip is-loading" data-runtime-chip>
+              <span class="connection-dot" aria-hidden="true"></span>
+              <span data-runtime-label>正在连接分析服务</span>
+            </span>
+            <span class="operator-avatar" aria-label="当前为本机运营账号">运营</span>
+          </div>
+        </header>
+
+        <main id="main-content">
+          <section class="page-intro" id="overview" aria-labelledby="page-title">
+            <div>
+              <p class="kicker">OPERATIONS WORKSPACE</p>
+              <h1 id="page-title">今天要分析什么？</h1>
+              <p>选择业务范围并描述目标，系统会整理数据、执行分析并生成可追溯的运营建议。</p>
+            </div>
+            <button class="primary-button" type="button" data-create-task>
+              <span aria-hidden="true">＋</span>
+              新建分析任务
+            </button>
+          </section>
+
+          <div class="dashboard-grid">
+            <section class="panel compose-panel" id="new-analysis" aria-labelledby="new-analysis-title">
+              <div class="panel-heading">
+                <div>
+                  <span class="panel-label">创建任务</span>
+                  <h2 id="new-analysis-title">设置分析范围</h2>
+                </div>
+                <span class="step-badge">1 / 2</span>
+              </div>
+
+              <form data-analysis-form>
+                <fieldset class="form-group">
+                  <legend>选择业务模块</legend>
+                  <p class="field-hint">可多选，系统会自动组合对应分析流程。</p>
+                  <div class="domain-grid">
+                    <label class="domain-option">
+                      <input type="checkbox" name="domain" value="content_growth" checked />
+                      <span class="domain-icon domain-icon--content" aria-hidden="true">播</span>
+                      <span>
+                        <strong>内容增长</strong>
+                        <small>曝光、播放、互动与点击</small>
+                      </span>
+                      <span class="check-mark" aria-hidden="true">✓</span>
+                    </label>
+                    <label class="domain-option">
+                      <input type="checkbox" name="domain" value="live_conversion" checked />
+                      <span class="domain-icon domain-icon--live" aria-hidden="true">直</span>
+                      <span>
+                        <strong>直播转化</strong>
+                        <small>观看、商品访问与成交</small>
+                      </span>
+                      <span class="check-mark" aria-hidden="true">✓</span>
+                    </label>
+                    <label class="domain-option">
+                      <input type="checkbox" name="domain" value="attribution_leads" checked />
+                      <span class="domain-icon domain-icon--lead" aria-hidden="true">客</span>
+                      <span>
+                        <strong>渠道与线索</strong>
+                        <small>来源、跟进与订单关联</small>
+                      </span>
+                      <span class="check-mark" aria-hidden="true">✓</span>
+                    </label>
+                  </div>
+                  <p class="field-error" data-domain-error aria-live="polite"></p>
+                </fieldset>
+
+                <div class="form-group">
+                  <label for="data-source">分析数据</label>
+                  <div class="select-wrap">
+                    <select id="data-source" name="data_source" data-source-select disabled>
+                      <option>正在读取可用数据……</option>
+                    </select>
+                  </div>
+                  <p class="field-hint" data-source-hint>数据仅用于当前分析，不会写回业务系统。</p>
+                </div>
+
+                <div class="form-group">
+                  <div class="label-row">
+                    <label for="objective">本次分析目标</label>
+                    <span><span data-objective-count>0</span> / 1000</span>
+                  </div>
+                  <textarea
+                    id="objective"
+                    name="objective"
+                    maxlength="1000"
+                    required
+                    placeholder="例如：找出本周内容到直播承接中的主要流失环节，并给出下周可执行的优化建议。"
+                    data-objective
+                  ></textarea>
+                </div>
+
+                <label class="strategy-toggle">
+                  <span>
+                    <strong>生成行动建议</strong>
+                    <small>在诊断完成后整理负责人、时限与复验指标</small>
+                  </span>
+                  <input type="checkbox" name="include_strategy" checked />
+                  <span class="switch" aria-hidden="true"></span>
+                </label>
+
+                <div class="form-footer">
+                  <p><span aria-hidden="true">◈</span> 分析只读取已选数据，不修改 CRM、订单或线索。</p>
+                  <button class="secondary-button" type="submit">预览任务</button>
+                </div>
+              </form>
+            </section>
+
+            <div class="side-column">
+              <section class="panel status-panel" id="runtime-status" aria-labelledby="runtime-title">
+                <div class="panel-heading panel-heading--small">
+                  <div>
+                    <span class="panel-label">服务状态</span>
+                    <h2 id="runtime-title">运行环境</h2>
+                  </div>
+                  <span class="status-badge is-loading" data-ready-state>检查中</span>
+                </div>
+                <dl class="status-list">
+                  <div>
+                    <dt>分析空间</dt>
+                    <dd data-workspace-state>—</dd>
+                  </div>
+                  <div>
+                    <dt>访问凭据</dt>
+                    <dd data-credentials-state>—</dd>
+                  </div>
+                  <div>
+                    <dt>任务重试</dt>
+                    <dd data-retry-state>—</dd>
+                  </div>
+                </dl>
+                <p class="status-guidance" data-runtime-note aria-live="polite">正在读取本机服务状态……</p>
+              </section>
+
+              <section class="panel preview-panel" aria-labelledby="preview-title">
+                <div class="panel-heading panel-heading--small">
+                  <div>
+                    <span class="panel-label">任务确认</span>
+                    <h2 id="preview-title">任务预览</h2>
+                  </div>
+                </div>
+                <div class="empty-preview" data-empty-preview>
+                  <span aria-hidden="true">↗</span>
+                  <p>填写分析设置并点击“预览任务”，在开始前核对范围和目标。</p>
+                </div>
+                <div class="task-preview" data-task-preview hidden>
+                  <dl>
+                    <div><dt>业务模块</dt><dd data-preview-domains>—</dd></div>
+                    <div><dt>数据来源</dt><dd data-preview-source>—</dd></div>
+                    <div><dt>行动建议</dt><dd data-preview-strategy>—</dd></div>
+                  </dl>
+                  <div class="preview-objective">
+                    <span>分析目标</span>
+                    <p data-preview-objective></p>
+                  </div>
+                  <p class="preview-notice">任务设置已保存到当前页面，尚未开始运行。</p>
+                  <button class="primary-button preview-start-button" type="button" data-open-confirm disabled>
+                    确认并开始
+                  </button>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          <section class="panel data-panel" id="data-sources" aria-labelledby="data-source-title">
+            <div class="panel-heading">
+              <div>
+                <span class="panel-label">数据管理</span>
+                <h2 id="data-source-title">数据源管理</h2>
+              </div>
+              <span class="data-source-count" data-source-count>正在读取</span>
+            </div>
+            <div class="data-source-table" role="table" aria-label="已连接数据源">
+              <div class="data-row data-row--header" role="row">
+                <span role="columnheader">名称</span>
+                <span role="columnheader">接入类型</span>
+                <span role="columnheader">数据内容</span>
+                <span role="columnheader">数据量</span>
+                <span role="columnheader">状态</span>
+              </div>
+              <div class="data-row data-row--loading" role="row" data-source-row>
+                <span>正在读取数据源……</span>
+              </div>
+            </div>
+            <div class="connector-catalog" aria-labelledby="connector-catalog-title">
+              <div class="connector-catalog__heading">
+                <div>
+                  <h3 id="connector-catalog-title">支持的接入方式</h3>
+                  <p>数据源由管理员完成授权和字段映射后，运营人员即可选择使用。</p>
+                </div>
+                <span data-connector-count>正在读取</span>
+              </div>
+              <div class="connector-grid" data-source-types>
+                <div class="connector-card connector-card--loading">正在读取接入方式……</div>
+              </div>
+              <p class="connector-note">所有正式数据连接默认采用只读权限；数据库密码与应用密钥只保存在服务端。</p>
+            </div>
+          </section>
+
+          <section class="panel activity-panel" id="task-activity" aria-labelledby="activity-title">
+            <div class="panel-heading">
+              <div>
+                <span class="panel-label">任务记录</span>
+                <h2 id="activity-title">最近分析</h2>
+              </div>
+              <button class="text-button task-refresh-button" type="button" data-refresh-tasks>
+                刷新记录
+              </button>
+            </div>
+            <div class="current-task" aria-label="当前任务">
+              <div class="activity-empty" data-activity-empty>
+                <span class="empty-icon" aria-hidden="true">✓</span>
+                <div>
+                  <strong>当前没有进行中的分析</strong>
+                  <p>开始任务后，可在这里查看处理进度；已创建任务会保留在下方记录中。</p>
+                </div>
+                <button class="text-button" type="button" data-create-task>创建第一个任务</button>
+              </div>
+              <div class="activity-list" data-activity-list hidden></div>
+            </div>
+
+            <div class="task-history" aria-labelledby="task-history-title">
+              <div class="task-history-heading">
+                <div>
+                  <h3 id="task-history-title">历史记录</h3>
+                  <p>点击任一任务，可重新查看当时生成的安全运营结果。</p>
+                </div>
+                <span data-task-count>正在读取</span>
+              </div>
+              <div class="task-history-state" data-task-history-state>
+                正在读取历史任务……
+              </div>
+              <div class="task-history-list" data-task-history-list hidden></div>
+            </div>
+          </section>
+
+          <section class="panel results-panel" id="analysis-result" aria-labelledby="result-title" data-results-panel hidden>
+            <div class="panel-heading result-heading">
+              <div>
+                <span class="panel-label">分析结果</span>
+                <h2 id="result-title">本次经营结论</h2>
+              </div>
+              <span class="result-status" data-result-status>正在整理</span>
+            </div>
+
+            <div class="result-hero">
+              <p class="result-reference" data-result-reference></p>
+              <h3 data-result-headline>正在读取分析结果</h3>
+              <p data-result-summary>请稍候。</p>
+            </div>
+
+            <div class="result-notices" data-result-notices hidden></div>
+
+            <section class="result-section" data-findings-section>
+              <div class="result-section-heading">
+                <div>
+                  <span>关键发现</span>
+                  <h3>先看最影响经营动作的结论</h3>
+                </div>
+                <span data-finding-count>0 项</span>
+              </div>
+              <div class="finding-grid" data-result-findings></div>
+            </section>
+
+            <section class="result-section" data-actions-section>
+              <div class="result-section-heading">
+                <div>
+                  <span>下一步行动</span>
+                  <h3>按优先级推进并复验</h3>
+                </div>
+                <span data-action-count>0 项</span>
+              </div>
+              <div class="actions-list" data-result-actions></div>
+            </section>
+
+            <div class="result-footer">
+              <p>结论只适用于当前选择的数据和业务范围。</p>
+              <button class="secondary-button" type="button" data-create-task>创建新的分析</button>
+            </div>
+          </section>
+        </main>
+
+        <footer>
+          <span>Data Flow Commerce Operations</span>
+          <span>本机安全运行</span>
+        </footer>
+      </div>
+    </div>
+
+    <div class="toast" role="status" aria-live="polite" data-toast hidden></div>
+
+    <dialog class="run-dialog" data-run-dialog aria-labelledby="run-dialog-title">
+      <div class="dialog-shell">
+        <header class="dialog-heading">
+          <div>
+            <span class="panel-label">运行确认</span>
+            <h2 id="run-dialog-title">确认本次分析</h2>
+          </div>
+          <button class="dialog-close" type="button" aria-label="关闭确认窗口" data-close-dialog>×</button>
+        </header>
+
+        <dl class="confirmation-summary">
+          <div><dt>业务模块</dt><dd data-confirm-domains>—</dd></div>
+          <div><dt>数据来源</dt><dd data-confirm-source>—</dd></div>
+          <div><dt>行动建议</dt><dd data-confirm-strategy>—</dd></div>
+        </dl>
+
+        <div class="billing-notice">
+          <span aria-hidden="true">¥</span>
+          <div>
+            <strong>本次运行将调用模型服务</strong>
+            <p>可能产生模型调用费用，实际金额由当前配置的服务商按用量结算。系统只提交一次，网络结果不明确时不会自动重试。</p>
+          </div>
+        </div>
+
+        <label class="fee-confirmation">
+          <input type="checkbox" data-fee-confirm />
+          <span>我已核对任务范围，并同意本次执行可能产生模型调用费用。</span>
+        </label>
+        <p class="dialog-error" data-submit-error aria-live="polite"></p>
+
+        <div class="dialog-actions">
+          <button class="text-action-button" type="button" data-close-dialog>返回修改</button>
+          <button class="primary-button" type="button" data-submit-run disabled>确认费用并开始分析</button>
+        </div>
+      </div>
+    </dialog>
+  </body>
+</html>

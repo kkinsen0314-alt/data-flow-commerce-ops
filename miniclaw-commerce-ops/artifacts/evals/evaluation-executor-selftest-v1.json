@@ -1,0 +1,60 @@
+{
+  "schema_version": "1.0",
+  "record_type": "commerce_ops_evaluation_executor_selftest",
+  "status": "pass",
+  "generated_at": "2026-09-11T17:02:00+08:00",
+  "commands": [
+    {
+      "command": "python -B scripts\\run-commerce-ops-evals.py preflight",
+      "exit_code": 0,
+      "result": "30/30 cases runnable; no pending fixtures; current evaluator fingerprint recorded"
+    },
+    {
+      "command": "python -B -m unittest tests.test_evaluation tests.test_evaluation_delivery_readiness tests.test_github_source_preview -v",
+      "exit_code": 0,
+      "result": "19 evaluation, delivery-readiness, and source-preview tests passed"
+    },
+    {
+      "command": "python -B -m unittest discover -s tests -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "result": "93 project tests passed"
+    },
+    {
+      "command": "python -B -m unittest discover -s tests -p \"test_*.py\" -q (inside release/miniclaw-commerce-ops)",
+      "exit_code": 0,
+      "result": "93 source-preview package tests passed"
+    },
+    {
+      "command": "python -B scripts\\verify-evaluation-delivery-readiness.py",
+      "exit_code": 0,
+      "result": "verification passed; real eval runs 0; quality release blocked; GitHub preview stale"
+    }
+  ],
+  "validated_capabilities": [
+    "dataset and fixture preflight",
+    "H01-H12 deterministic scoring structure",
+    "traceable human or LLM Judge metadata required for H09 H10 and H12",
+    "LLM Judge provider model and prompt hash requirement",
+    "role allowlist and uncertain retry detection",
+    "trace collection fields",
+    "baseline/candidate dataset mismatch blocking",
+    "six-batch plan covers all 30 cases once",
+    "real evaluation evidence absence remains blocked instead of inferred from fixtures",
+    "current GitHub source-preview manifest and allowlist validation"
+  ],
+  "evidence_boundary": {
+    "fixture_preflight_executed": true,
+    "evaluation_executor_unit_tested": true,
+    "delivery_readiness_verified": true,
+    "recorded_agent_traces_scored": false,
+    "recorded_eval_run_count": 0,
+    "provider_configured": false,
+    "plugin_enabled": false,
+    "agent_session_created": false,
+    "model_called": false,
+    "judge_called": false,
+    "agent_quality_pass_rate_available": false,
+    "github_published": false,
+    "synthetic_business_result": false
+  }
+}

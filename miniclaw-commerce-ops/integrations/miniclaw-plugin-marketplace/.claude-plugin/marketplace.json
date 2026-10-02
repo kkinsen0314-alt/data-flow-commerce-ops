@@ -1,0 +1,17 @@
+{
+  "name": "project017-commerce-ops",
+  "owner": {
+    "name": "project017"
+  },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "MiniClaw 电商运营确定性工具目录；当前仅准备静态导入资产。"
+  },
+  "plugins": [
+    {
+      "name": "commerce-ops",
+      "source": "./plugins/commerce-ops",
+      "description": "数据检查、短视频、直播、渠道线索和受限钻取 MCP 声明。"
+    }
+  ]
+}
