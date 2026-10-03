@@ -1,0 +1,730 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://local.miniclaw/contracts/commerce-ops-workflow-v1.schema.json",
+  "title": "Data Flow Commerce Operations Workflow Contract v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "bundle_type",
+    "synthetic",
+    "normalized_request",
+    "dataset_manifests",
+    "analysis_packets",
+    "decision_packet",
+    "delivery_package",
+    "error_example"
+  ],
+  "properties": {
+    "bundle_type": {"const": "commerce_ops_contract_test_bundle"},
+    "synthetic": {"const": true},
+    "normalized_request": {"$ref": "#/$defs/CommerceOpsRunRequest"},
+    "dataset_manifests": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/DatasetManifest"}
+    },
+    "analysis_packets": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/AnalysisPacket"}
+    },
+    "decision_packet": {
+      "oneOf": [
+        {"$ref": "#/$defs/DecisionPacket"},
+        {"type": "null"}
+      ]
+    },
+    "delivery_package": {"$ref": "#/$defs/DeliveryPackage"},
+    "error_example": {"$ref": "#/$defs/WorkflowError"}
+  },
+  "$defs": {
+    "WorkflowRunId": {
+      "type": "string",
+      "pattern": "^wf_[A-Za-z0-9_-]+$"
+    },
+    "DatasetId": {
+      "type": "string",
+      "pattern": "^ds_[A-Za-z0-9_-]+$"
+    },
+    "AnalysisRunId": {
+      "type": "string",
+      "pattern": "^analysis_[A-Za-z0-9_-]+$"
+    },
+    "ServiceRunId": {
+      "type": "string",
+      "pattern": "^srv_[A-Za-z0-9_-]+$"
+    },
+    "EvidenceId": {
+      "type": "string",
+      "pattern": "^ev_[A-Za-z0-9_-]+$"
+    },
+    "FindingId": {
+      "type": "string",
+      "pattern": "^finding_[A-Za-z0-9_-]+$"
+    },
+    "ActionId": {
+      "type": "string",
+      "pattern": "^action_[A-Za-z0-9_-]+$"
+    },
+    "TerminalStatus": {
+      "type": "string",
+      "enum": ["completed", "partial", "blocked", "uncertain"]
+    },
+    "Domain": {
+      "type": "string",
+      "enum": ["content_growth", "live_conversion", "attribution_leads"]
+    },
+    "DatasetType": {
+      "type": "string",
+      "enum": [
+        "short_video",
+        "live_session",
+        "account",
+        "channel_lead",
+        "sales_followup",
+        "order"
+      ]
+    },
+    "Dimension": {
+      "type": "string",
+      "enum": [
+        "account",
+        "content",
+        "publish_time",
+        "live_session",
+        "channel",
+        "lead_source",
+        "sales_owner",
+        "order_status"
+      ]
+    },
+    "AgentRole": {
+      "type": "string",
+      "enum": [
+        "commerce_ops_supervisor",
+        "content_growth_analyst",
+        "live_conversion_analyst",
+        "attribution_lead_analyst",
+        "commerce_review_strategist"
+      ]
+    },
+    "AnalystRole": {
+      "type": "string",
+      "enum": [
+        "content_growth_analyst",
+        "live_conversion_analyst",
+        "attribution_lead_analyst"
+      ]
+    },
+    "ToolName": {
+      "type": "string",
+      "enum": [
+        "inspect_commerce_data",
+        "analyze_short_video_data",
+        "analyze_live_commerce_data",
+        "analyze_attribution_and_leads",
+        "drilldown_commerce_metric"
+      ]
+    },
+    "TimeRange": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["start", "end"],
+      "properties": {
+        "start": {"type": "string", "format": "date-time"},
+        "end": {"type": "string", "format": "date-time"}
+      }
+    },
+    "DeliveryRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["language", "format", "top_n", "include_actions"],
+      "properties": {
+        "language": {"const": "zh-CN"},
+        "format": {"enum": ["structured_json", "web_report"]},
+        "top_n": {"type": "integer", "minimum": 1, "maximum": 50},
+        "include_actions": {"type": "boolean"}
+      }
+    },
+    "CommerceOpsRunRequest": {
+      "$anchor": "CommerceOpsRunRequest",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "message_type",
+        "workflow_run_id",
+        "requested_at",
+        "objective",
+        "dataset_refs",
+        "requested_domains",
+        "requested_dimensions",
+        "time_range",
+        "delivery",
+        "constraints",
+        "synthetic"
+      ],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "message_type": {"const": "commerce_ops_run_request"},
+        "workflow_run_id": {"$ref": "#/$defs/WorkflowRunId"},
+        "requested_at": {"type": "string", "format": "date-time"},
+        "objective": {"type": "string", "minLength": 1},
+        "dataset_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/DatasetId"}
+        },
+        "requested_domains": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/Domain"}
+        },
+        "requested_dimensions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/Dimension"}
+        },
+        "time_range": {"$ref": "#/$defs/TimeRange"},
+        "delivery": {"$ref": "#/$defs/DeliveryRequirements"},
+        "constraints": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "synthetic": {"type": "boolean"}
+      }
+    },
+    "FieldDefinition": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "data_type",
+        "nullable",
+        "semantic_role",
+        "description"
+      ],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "data_type": {
+          "enum": ["string", "integer", "number", "boolean", "datetime"]
+        },
+        "nullable": {"type": "boolean"},
+        "semantic_role": {
+          "enum": [
+            "metric",
+            "dimension",
+            "relationship_key",
+            "timestamp",
+            "cost",
+            "identifier"
+          ]
+        },
+        "description": {"type": "string", "minLength": 1}
+      }
+    },
+    "RelationshipKey": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "field",
+        "entity_type",
+        "stable",
+        "coverage_ratio",
+        "target_dataset_types",
+        "hashed",
+        "note"
+      ],
+      "properties": {
+        "field": {"type": "string", "minLength": 1},
+        "entity_type": {
+          "enum": [
+            "account",
+            "content",
+            "click",
+            "live_session",
+            "lead",
+            "sales_owner",
+            "order"
+          ]
+        },
+        "stable": {"type": "boolean"},
+        "coverage_ratio": {"type": "number", "minimum": 0, "maximum": 1},
+        "target_dataset_types": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/DatasetType"}
+        },
+        "hashed": {"type": "boolean"},
+        "note": {"type": "string", "minLength": 1}
+      }
+    },
+    "DatasetQuality": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "status",
+        "row_count",
+        "duplicate_rows",
+        "missing_required_fields",
+        "warnings"
+      ],
+      "properties": {
+        "status": {"enum": ["pass", "partial", "blocked"]},
+        "row_count": {"type": "integer", "minimum": 0},
+        "duplicate_rows": {"type": "integer", "minimum": 0},
+        "missing_required_fields": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "warnings": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "AnalysisReadiness": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["cross_domain_attribution", "roi_calculation", "reasons"],
+      "properties": {
+        "cross_domain_attribution": {"enum": ["allowed", "blocked"]},
+        "roi_calculation": {"enum": ["allowed", "blocked"]},
+        "reasons": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "DatasetManifest": {
+      "$anchor": "DatasetManifest",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "message_type",
+        "workflow_run_id",
+        "dataset_id",
+        "dataset_type",
+        "source_name",
+        "sha256",
+        "synthetic",
+        "fields",
+        "available_dimensions",
+        "relationship_keys",
+        "data_quality",
+        "analysis_readiness",
+        "contains_sensitive_data",
+        "redaction_applied"
+      ],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "message_type": {"const": "dataset_manifest"},
+        "workflow_run_id": {"$ref": "#/$defs/WorkflowRunId"},
+        "dataset_id": {"$ref": "#/$defs/DatasetId"},
+        "dataset_type": {"$ref": "#/$defs/DatasetType"},
+        "source_name": {"type": "string", "minLength": 1},
+        "sha256": {"type": "string", "pattern": "^[A-Fa-f0-9]{64}$"},
+        "synthetic": {"type": "boolean"},
+        "fields": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/FieldDefinition"}
+        },
+        "available_dimensions": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/Dimension"}
+        },
+        "relationship_keys": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/RelationshipKey"}
+        },
+        "data_quality": {"$ref": "#/$defs/DatasetQuality"},
+        "analysis_readiness": {"$ref": "#/$defs/AnalysisReadiness"},
+        "contains_sensitive_data": {"type": "boolean"},
+        "redaction_applied": {"type": "boolean"}
+      }
+    },
+    "ServiceCall": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "tool_name",
+        "caller_role",
+        "attempt",
+        "service_run_id",
+        "outcome",
+        "duration_ms",
+        "side_effect_state",
+        "automatic_retry"
+      ],
+      "properties": {
+        "tool_name": {"$ref": "#/$defs/ToolName"},
+        "caller_role": {"$ref": "#/$defs/AgentRole"},
+        "attempt": {"type": "integer", "minimum": 1},
+        "service_run_id": {"$ref": "#/$defs/ServiceRunId"},
+        "outcome": {"enum": ["success", "failure", "uncertain"]},
+        "duration_ms": {"type": ["number", "null"], "minimum": 0},
+        "side_effect_state": {"enum": ["none", "possible", "confirmed"]},
+        "automatic_retry": {"type": "boolean"}
+      }
+    },
+    "Evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "evidence_id",
+        "dataset_id",
+        "service_run_id",
+        "metric_name",
+        "metric_value",
+        "unit",
+        "scope",
+        "calculation",
+        "statement",
+        "synthetic",
+        "data_quality_status"
+      ],
+      "properties": {
+        "evidence_id": {"$ref": "#/$defs/EvidenceId"},
+        "dataset_id": {"$ref": "#/$defs/DatasetId"},
+        "service_run_id": {"$ref": "#/$defs/ServiceRunId"},
+        "metric_name": {"type": "string", "minLength": 1},
+        "metric_value": {"type": ["string", "number", "boolean", "null"]},
+        "unit": {"type": "string", "minLength": 1},
+        "scope": {
+          "type": "object",
+          "additionalProperties": {"type": "string"}
+        },
+        "calculation": {"type": "string", "minLength": 1},
+        "statement": {"type": "string", "minLength": 1},
+        "synthetic": {"type": "boolean"},
+        "data_quality_status": {"enum": ["pass", "partial"]}
+      }
+    },
+    "Finding": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "finding_id",
+        "category",
+        "severity",
+        "statement",
+        "evidence_ids",
+        "confidence",
+        "limitations"
+      ],
+      "properties": {
+        "finding_id": {"$ref": "#/$defs/FindingId"},
+        "category": {
+          "enum": [
+            "data_quality",
+            "content",
+            "live_funnel",
+            "channel",
+            "lead",
+            "sales_followup",
+            "order_conversion",
+            "attribution"
+          ]
+        },
+        "severity": {"enum": ["normal", "attention", "critical", "unknown"]},
+        "statement": {"type": "string", "minLength": 1},
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/EvidenceId"}
+        },
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "limitations": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "AnalysisPacket": {
+      "$anchor": "AnalysisPacket",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "message_type",
+        "workflow_run_id",
+        "analysis_run_id",
+        "agent_role",
+        "domain",
+        "terminal_status",
+        "dataset_ids",
+        "service_calls",
+        "evidence",
+        "findings",
+        "missing_evidence",
+        "assumptions"
+      ],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "message_type": {"const": "analysis_packet"},
+        "workflow_run_id": {"$ref": "#/$defs/WorkflowRunId"},
+        "analysis_run_id": {"$ref": "#/$defs/AnalysisRunId"},
+        "agent_role": {"$ref": "#/$defs/AnalystRole"},
+        "domain": {"$ref": "#/$defs/Domain"},
+        "terminal_status": {"$ref": "#/$defs/TerminalStatus"},
+        "dataset_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/DatasetId"}
+        },
+        "service_calls": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/ServiceCall"}
+        },
+        "evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/Evidence"}
+        },
+        "findings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/Finding"}
+        },
+        "missing_evidence": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "assumptions": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "VerificationMetric": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "name",
+        "direction",
+        "baseline",
+        "target",
+        "unit",
+        "check_after",
+        "verification_method",
+        "dataset_ids",
+        "requires_cost_data"
+      ],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "direction": {"enum": ["increase", "decrease", "maintain", "observe"]},
+        "baseline": {"type": ["string", "number", "boolean", "null"]},
+        "target": {"type": ["string", "number", "boolean", "null"]},
+        "unit": {"type": "string", "minLength": 1},
+        "check_after": {"type": "string", "minLength": 1},
+        "verification_method": {"type": "string", "minLength": 1},
+        "dataset_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/DatasetId"}
+        },
+        "requires_cost_data": {"type": "boolean"}
+      }
+    },
+    "Action": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "action_id",
+        "priority",
+        "finding_ids",
+        "evidence_ids",
+        "action",
+        "owner_role",
+        "due_window",
+        "rationale",
+        "verification_metric",
+        "guardrails",
+        "confidence"
+      ],
+      "properties": {
+        "action_id": {"$ref": "#/$defs/ActionId"},
+        "priority": {"enum": ["high", "medium", "low"]},
+        "finding_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/FindingId"}
+        },
+        "evidence_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/EvidenceId"}
+        },
+        "action": {"type": "string", "minLength": 1},
+        "owner_role": {"type": "string", "minLength": 1},
+        "due_window": {"type": "string", "minLength": 1},
+        "rationale": {"type": "string", "minLength": 1},
+        "verification_metric": {"$ref": "#/$defs/VerificationMetric"},
+        "guardrails": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      }
+    },
+    "DecisionPacket": {
+      "$anchor": "DecisionPacket",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "message_type",
+        "workflow_run_id",
+        "decision_run_id",
+        "agent_role",
+        "source_analysis_ids",
+        "terminal_status",
+        "actions",
+        "blocked_reasons"
+      ],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "message_type": {"const": "decision_packet"},
+        "workflow_run_id": {"$ref": "#/$defs/WorkflowRunId"},
+        "decision_run_id": {
+          "type": "string",
+          "pattern": "^decision_[A-Za-z0-9_-]+$"
+        },
+        "agent_role": {"const": "commerce_review_strategist"},
+        "source_analysis_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/AnalysisRunId"}
+        },
+        "terminal_status": {"$ref": "#/$defs/TerminalStatus"},
+        "actions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/Action"}
+        },
+        "blocked_reasons": {
+          "type": "array",
+          "items": {"type": "string"}
+        }
+      }
+    },
+    "TraceReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["trace_id", "actor_role", "run_id", "parent_run_id"],
+      "properties": {
+        "trace_id": {"type": "string", "pattern": "^trace_[A-Za-z0-9_-]+$"},
+        "actor_role": {"$ref": "#/$defs/AgentRole"},
+        "run_id": {"type": "string", "minLength": 1},
+        "parent_run_id": {"type": ["string", "null"]}
+      }
+    },
+    "DeliveryPackage": {
+      "$anchor": "DeliveryPackage",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "message_type",
+        "workflow_run_id",
+        "supervisor_role",
+        "terminal_status",
+        "analysis_refs",
+        "decision_ref",
+        "headline",
+        "executive_summary",
+        "finding_refs",
+        "action_refs",
+        "unresolved_items",
+        "trace_refs",
+        "requires_human_confirmation"
+      ],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "message_type": {"const": "delivery_package"},
+        "workflow_run_id": {"$ref": "#/$defs/WorkflowRunId"},
+        "supervisor_role": {"const": "commerce_ops_supervisor"},
+        "terminal_status": {"$ref": "#/$defs/TerminalStatus"},
+        "analysis_refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/AnalysisRunId"}
+        },
+        "decision_ref": {
+          "type": ["string", "null"],
+          "pattern": "^decision_[A-Za-z0-9_-]+$"
+        },
+        "headline": {"type": "string", "minLength": 1},
+        "executive_summary": {"type": "string", "minLength": 1},
+        "finding_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/FindingId"}
+        },
+        "action_refs": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/ActionId"}
+        },
+        "unresolved_items": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "trace_refs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/TraceReference"}
+        },
+        "requires_human_confirmation": {"type": "boolean"}
+      }
+    },
+    "WorkflowError": {
+      "$anchor": "WorkflowError",
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "message_type",
+        "workflow_run_id",
+        "stage",
+        "code",
+        "retryable",
+        "outcome_uncertain",
+        "human_action",
+        "safe_message"
+      ],
+      "properties": {
+        "schema_version": {"const": "1.0"},
+        "message_type": {"const": "workflow_error"},
+        "workflow_run_id": {"$ref": "#/$defs/WorkflowRunId"},
+        "stage": {"enum": ["intake", "inspection", "analysis", "decision", "delivery"]},
+        "code": {
+          "enum": [
+            "INVALID_INPUT",
+            "PAYLOAD_TOO_LARGE",
+            "RELATION_KEY_MISSING",
+            "COST_FIELD_MISSING",
+            "ANALYSIS_UNAVAILABLE",
+            "ANALYSIS_OUTCOME_UNCERTAIN",
+            "DIAGNOSIS_INCOMPLETE",
+            "DECISION_BLOCKED",
+            "DELIVERY_UNCERTAIN"
+          ]
+        },
+        "retryable": {"type": "boolean"},
+        "outcome_uncertain": {"type": "boolean"},
+        "human_action": {"type": "string", "minLength": 1},
+        "safe_message": {"type": "string", "minLength": 1}
+      }
+    }
+  }
+}

@@ -1,7 +1,0 @@
-{
-  "name": "MiniClaw 电商运营数据分析多 Agent 工作台",
-  "agent_profile_id": "REPLACE_WITH_CREATED_AGENT_PROFILE_ID",
-  "execution_mode": "host",
-  "interaction_mode": "assistant",
-  "custom_cwd": "D:\\Workspace\\project017-miniclaw-commerce-ops"
-}
